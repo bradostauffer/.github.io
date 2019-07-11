@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Game</title>
+<style>
+canvas{
+	border: 1px solid black;
+	background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="startGame()">
+<script>
+	var background;
+	var ammo = [];
+	var character;
+	var spike = [];
+	var score;
+	function startGame(){
+		background = new gameComponent(600, 300, 0, 0, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdZNhMbZCS4FrgbPvqTPKsBBmeaizBD9CIil1UPDhItqedtk9sxQ", "image")
+		character = new gameComponent(40, 40, 20, 100, "rabbit_normal.png","image" );
+		spike.push(new gameComponent(15, 25, 300, 140, "bomb.png", "image"));
+		score = new gameComponent(20, 20, 10, 30, "red", "text")
+		gameArea.init();
+	}
+	var gameArea = {
+		canvas : document.createElement("canvas"),
+		init : function() {
+			this.canvas.width = 512;
+			this.canvas.height = 300;
+			this.context = this.canvas.getContext("2d");
+			document.body.insertBefore(this.canvas,document.body.childNodes[0]);
+			this.interval = setInterval(updateGameArea, 20);
+			this.framenum = 0;
+			window.addEventListener('keydown', function (e) {
+				gameArea.key = e.keyCode;
+			})
+			window.addEventListener('keyup', function (e) {
+				gameArea.key = false;
+			})
+
+
+		},
+		clear : function() {
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		stop : function() {
+			clearInterval(this.interval);
+		}
+	}
+
+	function everynthframe (fnum) {
+		if((gameArea.framenum/fnum) % 1 == 0 || fnum == 1) {
+			return true;
+		}
+		return false;
+	}
+
+	function gameComponent (width, height, x, y, color, type){
+		if (type == "image") {
+			 this.img = new Image();
+			 this.img.src = color;
+		} 
+		this.color = color;
+		this.width = width;
+		this.height = height;
+		this.x = x;
+		this.y = y;
+		this.jumpspeed = 0;
+		this.update = function(){
+			ctx = gameArea.context;
+			if (type == "image"){
+				ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+			} else if (type == "text"){
+				ctx.font = this.width + this.height;
+				ctx.fillStyle = this.color;
+				ctx.fillText(this.text, 10, 20);
+			} else {
+				ctx.fillStyle = this.color;
+				ctx.fillRect (this.x, this.y, this.width, this.height);
+			  }
+
+		}
+		this.curpos = function(){
+			this.y += this.jumpspeed;
+		}
+
+		this.collision = function(entity) {
+			var charleft = this.x;
+			var charright = this.x + this.width;
+			var chartop = this.y;
+			var charbottom = this.y + this.height;
+			var obstacleleft = entity.x;
+			var obstacleright = entity.x + entity.width;
+			var obstacletop = entity.y;
+			var obstaclebottom = entity.y + entity.height;
+			var collide = true;
+			if ((charbottom < obstacletop )|| (chartop > obstaclebottom )||
+				(charright < obstacleleft) || (charleft > obstacleright)) {
+				collide = false;
+			}
+			return collide;
+		}
+	}
+
+	function updateGameArea() {
+		for(i = 0; i < spike.length; i++) {
+			if (character.collision(spike[i])) {
+				gameArea.stop();
+
+			} for (j = 0; j < ammo.length; j++)	{
+				if (ammo[j].collision(spike[i])) {
+					spike.splice(i,1);
+
+				}
+			}
+		}
+		 gameArea.clear();
+		 gameArea.framenum += 1;
+		 if (everynthframe(20)){
+		 		let min_y = 30;
+		 		let max_y = 220;
+		 		let new_y =  Math.floor(Math.random()*(max_y - min_y + 1) + min_y);
+				spike.push(new gameComponent(15, 25, 500, new_y, "bomb.png", "image"));
+		 }
+		 character.jumpspeed = 0;
+		 if (gameArea.key && gameArea.key == 32){
+		 	character.jumpspeed = -4;
+		 	character.img.src = "rabbit_up.png";
+		 } else if (gameArea.key && gameArea.key == 65) {
+		 	ammo.push(new gameComponent(10, 10, character.x, character.y, "https://localtvwtkr.files.wordpress.com/2019/01/gettyimages-853959940.jpg?quality=85&strip=all&resize=1200,801", "image"));
+		 } else {
+		 		character.img.src = "rabbit_down.png";
+		 		character.jumpspeed = 2;
+		 }
+		 		character.x += 0;
+		 		background.update();
+		 		character.curpos();
+		 		character.update();
+		 		score.text = "SCORE: " + gameArea.framenum;
+		 		score.update();
+		 		for(i = 0; i < ammo.length; i++){
+		 			ammo[i].x += 9;
+		 			ammo[i].update();
+		 		}
+		 		for(i = 0; i < spike.length; i++) {
+		 			spike[i].x += -8;
+		 			spike[i].update();
+		 		}
+		
+	}
+
+</script>
+<button onclick="location.reload()">RESTART</button>
+</body>
+</html>
