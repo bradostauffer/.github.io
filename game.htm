@@ -127,11 +127,11 @@ canvas{
 		 character.jumpspeed = 0;
 		 if (gameArea.key && gameArea.key == 32){
 		 	character.jumpspeed = -4;
-		 	character.img.src = "rabbit_up.png"
+		 	character.img.src = "rabbit_up.png";
 		 } else if (gameArea.key && gameArea.key == 65) {
 		 	ammo.push(new gameComponent(10, 10, character.x, character.y, "https://localtvwtkr.files.wordpress.com/2019/01/gettyimages-853959940.jpg?quality=85&strip=all&resize=1200,801", "image"));
 		 } else {
-		 		character.img.src = "rabbit_down.png"
+		 		character.img.src = "rabbit_down.png";
 		 		character.jumpspeed = 2;
 		 }
 		 		character.x += 0;
