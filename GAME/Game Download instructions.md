@@ -3,4 +3,4 @@ Once the folder is unzipped, you simply can just click on the "BunnyBattle.htm" 
 
 Controls: spacebar jumps/hovers, "A" key fires your bunny flamethrower.  
 
-*Disclaimer I do not own any of the sprites used in this game*
+*Disclaimer I did not make any of the sprites used in this game. All come from other artists and creators*
