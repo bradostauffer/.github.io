@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Joël Porquet, PhD" />
+  <title>ECS 36C: Program #4</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style type="text/css">
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+font-family: 'Noto Serif', serif;
+font-size: 10px;
+line-height: 1.5em;
+padding: 1em;
+width: 960px;
+margin: auto;
+background: #fefefe;
+position: relative;
+}
+
+.keyword{
+position: absolute;
+right: -15em;
+width: 10em;
+}
+
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+line-height: 125%;
+margin-top: 1em;
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2.5em;
+}
+h2 {
+font-size: 2em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+background: #f0f0f0;
+font-family: 'Noto Sans Mono', monospace;
+font-size: 95%;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 1em 0;
+}
+figure img {
+border: none;
+margin: 0 auto;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.author {
+font-size: 1.2em;
+
+}
+
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 12pt;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+a[href]:after {
+content: " (" attr(href) ")";
+}
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
+</style>
+  <style type="text/css">.hll { background-color: #ffffcc }
+.c { color: #408080; font-style: italic } 
+.err { border: 1px solid #FF0000 } 
+.k { color: #008000; font-weight: bold } 
+.o { color: #666666 } 
+.ch { color: #408080; font-style: italic } 
+.cm { color: #408080; font-style: italic } 
+.cp { color: #BC7A00 } 
+.cpf { color: #408080; font-style: italic } 
+.c1 { color: #408080; font-style: italic } 
+.cs { color: #408080; font-style: italic } 
+.gd { color: #A00000 } 
+.ge { font-style: italic } 
+.gr { color: #FF0000 } 
+.gh { color: #000080; font-weight: bold } 
+.gi { color: #00A000 } 
+.go { color: #888888 } 
+.gp { color: #000080; font-weight: bold } 
+.gs { font-weight: bold } 
+.gu { color: #800080; font-weight: bold } 
+.gt { color: #0044DD } 
+.kc { color: #008000; font-weight: bold } 
+.kd { color: #008000; font-weight: bold } 
+.kn { color: #008000; font-weight: bold } 
+.kp { color: #008000 } 
+.kr { color: #008000; font-weight: bold } 
+.kt { color: #B00040 } 
+.m { color: #666666 } 
+.s { color: #BA2121 } 
+.na { color: #7D9029 } 
+.nb { color: #008000 } 
+.nc { color: #0000FF; font-weight: bold } 
+.no { color: #880000 } 
+.nd { color: #AA22FF } 
+.ni { color: #999999; font-weight: bold } 
+.ne { color: #D2413A; font-weight: bold } 
+.nf { color: #0000FF } 
+.nl { color: #A0A000 } 
+.nn { color: #0000FF; font-weight: bold } 
+.nt { color: #008000; font-weight: bold } 
+.nv { color: #19177C } 
+.ow { color: #AA22FF; font-weight: bold } 
+.w { color: #bbbbbb } 
+.mb { color: #666666 } 
+.mf { color: #666666 } 
+.mh { color: #666666 } 
+.mi { color: #666666 } 
+.mo { color: #666666 } 
+.sa { color: #BA2121 } 
+.sb { color: #BA2121 } 
+.sc { color: #BA2121 } 
+.dl { color: #BA2121 } 
+.sd { color: #BA2121; font-style: italic } 
+.s2 { color: #BA2121 } 
+.se { color: #BB6622; font-weight: bold } 
+.sh { color: #BA2121 } 
+.si { color: #BB6688; font-weight: bold } 
+.sx { color: #008000 } 
+.sr { color: #BB6688 } 
+.s1 { color: #BA2121 } 
+.ss { color: #19177C } 
+.bp { color: #008000 } 
+.fm { color: #0000FF } 
+.vc { color: #19177C } 
+.vg { color: #19177C } 
+.vi { color: #19177C } 
+.vm { color: #19177C } 
+.il { color: #666666 } 
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ECS 36C: Program #4</h1>
+<p class="author">Joël Porquet, PhD</p>
+<p class="date">UC Davis, Fall 2018</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#changelog"><span class="toc-section-number">1</span> Changelog</a></li>
+<li><a href="#general-information"><span class="toc-section-number">2</span> General information</a></li>
+<li><a href="#phase-1-llrb-based-set-map-and-multimap"><span class="toc-section-number">3</span> Phase #1: LLRB-based set, map and multimap</a></li>
+<li><a href="#phase-2-completely-fair-scheduler"><span class="toc-section-number">4</span> Phase #2: Completely Fair Scheduler</a></li>
+<li><a href="#report-document"><span class="toc-section-number">5</span> Report document</a></li>
+<li><a href="#submission"><span class="toc-section-number">6</span> Submission</a></li>
+<li><a href="#academic-integrity"><span class="toc-section-number">7</span> Academic integrity</a></li>
+</ul>
+</nav>
+<h1 id="changelog"><span class="header-section-number">1</span> Changelog</h1>
+<p><em>Note that the specifications for this programming assignment are subject to change at anytime for additional clarification. Make sure to always refer to the <strong>latest</strong> version.</em></p>
+<ul>
+<li>v6: Update deadline</li>
+<li>v5: For the <em>map</em>, <code>Remove()</code> needs to be slightly adapted as well</li>
+<li>v4: Clarify what should be printed</li>
+<li>v3: Throw an exception if key cannot be found with map and multimap</li>
+<li>v2: Fix typos in Phase 1.2 for the key removal</li>
+<li>v1: First publication</li>
+</ul>
+<h1 id="general-information"><span class="header-section-number">2</span> General information</h1>
+<ul>
+<li>Due before <strong>11:59 PM, Wednesday, November 28th, 2018</strong>.</li>
+<li>You will be working <strong>with a partner</strong> for this programming assignment.</li>
+<li>The reference work environment is the CSIF.</li>
+</ul>
+<h2 id="objectives-of-the-assignment"><span class="header-section-number">2.1</span> Objectives of the assignment</h2>
+<p>The objectives of this programming assignment are:</p>
+<ul>
+<li>Getting familiar the implementation of Left-Leaning Red-Black trees.</li>
+<li>Modifying a set container into a map container, and then into a multimap container.</li>
+<li>Implementing a simple version of the CFS, the default process scheduler used in the Linux kernel, which makes an interesting use of Red-Black trees.</li>
+<li>Writing high-quality C++ code by following established industry standards.</li>
+<li>Describing your code textually in a succinct and useful way.</li>
+</ul>
+<h2 id="constraints"><span class="header-section-number">2.2</span> Constraints</h2>
+<p>Your program(s) must be compatible with C++11, be compiled with GNU g++, and only use the standard functions provided by the <a href="https://en.wikipedia.org/wiki/C%2B%2B_Standard_Library">C++ Standard Library</a>. Your program cannot be linked to any other external libraries (e.g., Boost).</p>
+<p>Your code must follow the <a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a> and be properly commented when necessary. Use <code>cpplint</code> to ensure that your code conforms to the style guide.</p>
+<h2 id="assessment"><span class="header-section-number">2.3</span> Assessment</h2>
+<p>Your grade for this assignment will be broken down in several scores:</p>
+<ul>
+<li><p>Auto-grading: ~60% of grade</p>
+<p>Running an auto-grading script that tests your programs and checks their output against various inputs</p></li>
+<li><p>Manual review: ~40% of grade</p>
+<p>The manual review is itself broken down into different rubrics:</p>
+<ul>
+<li>Submission: ~5%</li>
+<li>Report file: ~25%</li>
+<li>Quality of implementation: ~50%</li>
+<li>Code style: ~10%</li>
+<li>Makefile: ~10%</li>
+</ul></li>
+</ul>
+<h1 id="phase-1-llrb-based-set-map-and-multimap"><span class="header-section-number">3</span> Phase #1: LLRB-based set, map and multimap</h1>
+<h2 id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
+<p>A <strong>set</strong> is a type of container that can hold a sorted collection of unique keys. The keys can be any objects, from simple primitive types, such as integers, to more complex class objects, as long as it is possible to determine if one object is smaller or greater than another.</p>
+<p>A <strong>map</strong>, also known as dictionary, is similar to a set but can pair each key to a value. A value is any type of object that the user wants to associate with a key.</p>
+<p>A <strong>multimap</strong> is similar to a map but allows keys to be pair with multiple values.</p>
+<h2 id="phase-1.0-set"><span class="header-section-number">3.2</span> Phase #1.0: set</h2>
+<p>The implementation of a set is already provided to you in <code>/home/cs36c/public/p4/llrb_set.h</code>.</p>
+<p>As you can notice, the implementation is based on a Left-Leaning Red-Black tree, very similar to what was shown in lecture. The implementation includes the somewhat complex <em>remove</em> operation, which you could look at out of curiosity.</p>
+<p>If you would like to understand more about the implementation, you can read the <a href="https://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf">paper</a> or the <a href="https://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf">slides</a> (deletion starting from slide 53) written by Robert Sedgewick, the inventor of Left-Leaning Red-Black trees.</p>
+<p>A simple tester that inserts a list of keys into a set and then removes them, is also provided in <code>/home/cs36c/public/p4/set_tester.cc</code>.</p>
+<p>Copy these files as they will be used as basis for the next phase.</p>
+<p><em>Note that you should not submit these files as part of your submission.</em></p>
+<h2 id="phase-1.1-map"><span class="header-section-number">3.3</span> Phase #1.1: map</h2>
+<p>Copy the file <code>llrb_set.h</code> into file <code>llrb_map.h</code>, and transform <em>set</em> container <code>LLRB_set</code> into <em>map</em> container <code>LLRB_map</code>.</p>
+<p>Here is a list of (most of) the necessary modifications:</p>
+<ol type="1">
+<li>Whereas the set only gets one template parameter to define the type of key it should hold, the map should have two template parameters: one for the type of key (<code>K</code>), and one for the type of value associated to each key (e.g., <code>V</code>).</li>
+<li>The definition of a <code>Node</code> should be enhanced to contain a value in addition to a key.</li>
+<li>Most of the API stays the same. Most methods still receive only a key as parameter (e.g., <code>Contains()</code>, <code>Remove()</code>) or return only a key (e.g., <code>Max()</code>, <code>Min()</code>). There are only three modifications to the API:
+<ul>
+<li>A new method <code>const V&amp; Get(const K&amp; key)</code> should be provided. As you can deduce from its prototype, it receives a key and returns the value associated to the specified key. If the key cannot be found, the method should throw an exception. Make sure that you don’t reinvent the wheel and check out the existing helper methods for the implementation.</li>
+<li>The existing method <code>Insert()</code> must be extended to receive a value in addition to a key. The implementation must also be changed in order to build nodes that have both a key and a value.</li>
+<li>The existing method <code>Remove()</code> must be take into account when replacing the node to delete with the min node that the content includes a value in addition to the key.</li>
+</ul></li>
+<li>It is not mandatory, but you can improve the printing method in order to help with debugging.</li>
+</ol>
+<p>Code your own tester in <code>map_tester.cc</code>, and make sure through various and relevant tests that your map implementation is correct.</p>
+<p>During this phase and the next one, you will end up having to search-and-replace a lot. This is the kind of laborious task that quickly becomes frustrating when using a subpar code editor. If you have not already, now is probably the good time to start using a powerful editor, as they usually allow search-and-replace to be done within a few keystrokes. An example here using Vim to replace all the occurrences of <code>LLRB_set</code> into <code>LLRB_map</code> (type this command and press Enter):</p>
+<pre><code>:%s/LLRB_set/LLRB_map/g</code></pre>
+<h2 id="phase-1.2-multimap"><span class="header-section-number">3.4</span> Phase #1.2: multimap</h2>
+<p>Copy the file <code>llrb_map.h</code> into file <code>llrb_multimap.h</code>, and transform <em>map</em> container <code>LLRB_map</code> into <em>multimap</em> container <code>LLRB_multimap</code>.</p>
+<p>Here is a list of (most of) the necessary modifications:</p>
+<ol type="1">
+<li>The definition of a <code>Node</code> should be enhanced to contain a list of values instead of only one value.</li>
+<li>Most of the API stays the same apart from three methods:
+<ul>
+<li>Method <code>Get()</code> should return the <em>first</em> value in the list of values associated to the given key.</li>
+<li>Method <code>Insert()</code> should be adapted to building nodes that have both a key and a list of values (note that upon creation, the list of values only has one value). When inserting a key-value pair with a key that already exists, the method should not longer throw an exception but add the given value to the <em>end</em> of the existing list of values associated to the given key.</li>
+<li><p>Method <code>Remove()</code> needs to be adapted in order to properly distinguish between the removal of a key that was paired to only one value, and the removal of a key shared by multiple values.</p>
+<p>In the first case, the entire node can be removed; in the second case, the node should not be removed, only the <em>first</em> value in the list of values should be removed.</p>
+<ul>
+<li>There are two locations in <code>Remove()</code> that should be slightly adapted. Don’t change the overall logic, just make sure that the distinction explained above is respected.</li>
+</ul></li>
+<li>Note that <code>DeleteMin()</code> does not need to be modified.</li>
+</ul></li>
+<li>Once again, it is not mandatory, but it could help to enhance the printing function to reflect the nature of the multimap for debugging purposes.</li>
+</ol>
+<p>Code your own tester in <code>multimap_tester.cc</code>, and make sure through various and relevant tests that your multimap implementation is correct.</p>
+<h1 id="phase-2-completely-fair-scheduler"><span class="header-section-number">4</span> Phase #2: Completely Fair Scheduler</h1>
+<h2 id="introduction-1"><span class="header-section-number">4.1</span> Introduction</h2>
+<p>On a typical computer, many applications (or <em>tasks</em>, or <em>processes</em>) are running at the same time. In fact they are usually not running exactly simultaneously (although multicores actually make that possible) as they have to share the same processor. The operating system’s kernel is in charge of scheduling the tasks, making sure that each task has frequent access to the processor in order to run. If the scheduler distributes the processing resource fairly, then the user has the illusion that applications are all running simultaneously.</p>
+<p>The Completely Fair Scheduler (CFS) is a scheduler which was introduced in the Linux kernel about 10 years ago, and has since then become the default scheduler. The main idea behind CFS is to provide an equal amount of processing resource to all the tasks in the system. For example, if there are 2 running tasks, they should get 50% of the processing resource each; if there are 4 running tasks, then each should get 25%.</p>
+<p>To determine a good balance between tasks, the CFS maintains the amount of time provided to a given task in what is called the <em>virtual runtime</em>. The smaller a task’s virtual runtime, the higher its need for the processor.</p>
+<p>Interestingly enough, whereas prior schedulers largely used queues to manage tasks, the CFS uses Red-Black trees as the “timeline” of future task execution, which makes it a perfect topic for this programming assignment.</p>
+<h2 id="the-cfs-scheduling-strategy"><span class="header-section-number">4.2</span> The CFS scheduling strategy</h2>
+<p>In a computer the unit of time is usually called a tick. It is defined by the amount of time between two timer interrupts. On Linux computers, the default tick value is 4 milliseconds (i.e., 250 ticks per seconds).</p>
+<p>For this assignment, we will assume that the unit of time is expressed in ticks. At the beginning, the tick value will be initialized at 0, and as tasks are scheduled the tick value will be incremented by one at each iteration.</p>
+<p>Tasks are describe with three values: a name, the tick value they should be started at, and their duration in ticks.</p>
+<p>The scheduler maintain a global <code>min_vruntime</code> value to determine when a task should stop running and let the processing resource be used by the next task. This value is first initialized to 0 at the beginning of the scheduling, and is set to the next task’s virtual runtime when a task is scheduled to run. The running task can keep the processing resource to itself until its own virtual runtime becomes greater than the global <code>min_vruntime</code>, in which case the next task should be scheduled instead, and so on. The running task’s virtual runtime is incremented by one at every tick. Once a task has reached completion, it can be removed from the system.</p>
+<p>Overall the scheduling loop follows several distinct steps:</p>
+<ul>
+<li>If there are tasks that should be launched at the current tick value, add them to the timeline of tasks.
+<ul>
+<li>Initialize their virtual runtime to the current global <code>min_vruntime</code>. This is to ensure that they will start executing soon, because they are inheriting the same priority as the next schedulable task.</li>
+</ul></li>
+<li>Check if the currently running task should let the processing resource to the next task. If it does, it should be added back to the timeline.</li>
+<li>If there is no more current task, get the next schedulable task from the timeline.
+<ul>
+<li>The next current tasks should be the task with the smallest virtual runtime. Here you note that if runnable tasks are kept in a Red-Black tree-based map, and ordered by their virtual runtime value (i.e., the key), then finding the task that has the minimum virtual runtime should be easy.</li>
+<li>After determining the new current task, the global <code>min_vruntime</code> should be set to the next task’s virtual runtime.</li>
+</ul></li>
+<li>The current task runs for one tick.</li>
+<li>The scheduler reports the scheduling status on the screen.</li>
+<li>If the current task has completed, it should be purged from the system.</li>
+<li>Finally, the tick value is incremented by one, and the loop can continue from the beginning.</li>
+</ul>
+<p>The scheduling loop stops when all tasks have been completed.</p>
+<h2 id="goal"><span class="header-section-number">4.3</span> Goal</h2>
+<p>Write a program named <code>cfs_sched.cc</code>, that receives a file containing a list of unordered task description. The program reads in the task descriptions and runs the CFS scheduler strategy until all tasks have completed. When a task has completed its entire execution, a <code>*</code> should be displayed next to its identifier.</p>
+<p>The input file contains one line per task description, and each line describes a tasks via three fields:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb2-1" title="1">&lt;identifier:<span class="dt">char</span>&gt; &lt;start_time:<span class="dt">unsigned</span> <span class="dt">int</span>&gt; &lt;duration:<span class="dt">unsigned</span> <span class="dt">int</span>&gt;</a></code></pre></div>
+<p>The output that the program has to print has the following format:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb3-1" title="1">&lt;tick&gt; [&lt;#tasks&gt;]: &lt;ID of running task&gt;</a></code></pre></div>
+<ul>
+<li>The ID of the running task is <code>_</code> if no task were scheduled for that tick period.</li>
+<li>The ID of the running task should be followed by a start if the task has reached completed at the end of the tick period.</li>
+</ul>
+<p>Example:</p>
+<pre class="console"><code>$ $ cat tasks1.dat 
+A 1 3
+B 2 4
+C 2 3
+$ ./cfs_sched tasks1.dat 
+0 [0]: _
+1 [1]: A
+2 [3]: B
+3 [3]: C
+4 [3]: C
+5 [3]: A
+6 [3]: B
+7 [3]: B
+8 [3]: C*
+9 [2]: A*
+10 [1]: B*
+$ 
+$ cat tasks2.dat 
+A 2 4
+B 7 2
+$ ./cfs_sched tasks2.dat 
+0 [0]: _
+1 [0]: _
+2 [1]: A
+3 [1]: A
+4 [1]: A
+5 [1]: A*
+6 [0]: _
+7 [1]: B
+8 [1]: B*
+$ echo $?
+0
+$ ./cfs_sched
+Usage: ./cfs_sched &lt;task_file.dat&gt;
+$ ./cfs_sched doesnotexist.dat
+Error: cannot open file doesnotexist.dat
+$ echo $?
+1
+$ </code></pre>
+<p>A working example of the program can be found at <code>/home/cs36c/public/p4/cfs_sched_reference</code>.</p>
+<h2 id="additional-information-and-constraints"><span class="header-section-number">4.4</span> Additional information and constraints</h2>
+<ul>
+<li>If the input file contains several tasks with the same start time, then their launching order should be determined by their identifier (e.g., <code>B</code> is launched before <code>C</code>).</li>
+<li>The nature of this problem can be nicely expressed with object-oriented programming. So do not use global variables, and think in terms of objects. For example, each task can be an object (of the same class), as well as the scheduler itself.
+<ul>
+<li>To debug objects easily (especially the tasks), you can overload the <code>&lt;&lt;</code> operator.</li>
+</ul></li>
+<li><p>Because you will create tasks upon reading the input file, and have to keep the objects around throughout the scheduling process, moving them in and out the timeline (represented by the Red-Black tree-based map), all of your containers should only store pointers. This way, the tasks objects are never copied around, and there’s only one instance for each of them. These objects should only be deleted when a task has effectively finished its execution.</p>
+<p>Example to illustrate the idea:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c++"><code class="sourceCode cpp"><a class="sourceLine" id="cb5-1" title="1"><span class="co">/* Creation of an object in memory */</span></a>
+<a class="sourceLine" id="cb5-2" title="2">MyClass *myobject = <span class="kw">new</span> MyClass{a, <span class="dv">1</span>, <span class="dv">3</span>};</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="bu">std::</span>vector&lt;MyClass*&gt; vect;</a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">/* Push object&#39;s address in vector */</span></a>
+<a class="sourceLine" id="cb5-5" title="5">vect.push_back(myobject);</a>
+<a class="sourceLine" id="cb5-6" title="6">...</a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">/* Get back object from its address */</span></a>
+<a class="sourceLine" id="cb5-8" title="8">MyClass *ptr = vect.back();</a>
+<a class="sourceLine" id="cb5-9" title="9">vect.pop_back();</a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co">/* Different pointer, but same object, at same address */</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="ot">assert</span>(myobject == ptr);</a>
+<a class="sourceLine" id="cb5-12" title="12">...</a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="co">/* Now the object is really remove from memory */</span></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="kw">delete</span> ptr;</a></code></pre></div></li>
+<li>The CFS needs a multimap in order to represent the timeline of tasks. The whole point of Phase #1 is that you should end up with a working multimap.
+<ul>
+<li>However, if you struggled to get your multimap to work in time, then you are authorized to use <code>std::multimap</code>. In that case, you would be penalized for the implementation score.</li>
+</ul></li>
+</ul>
+<h1 id="report-document"><span class="header-section-number">5</span> Report document</h1>
+<p>Write a report file in <code>report.pdf</code>, in which you describe your programs. For the first phase, you should briefly explain how to determined the coverage of both your testers.</p>
+<p>For the second phase, you should explain the CFS implementation. The objective of this explanation is not to paraphrase the code, nor to repeat the assignment, but to succinctly explain the logic of your code (e.g., choice of data structures, how the code was split into functions, etc.).</p>
+<p>The report should be up to one page maximum, and each phase should be described in a few short paragraphs.</p>
+<h1 id="submission"><span class="header-section-number">6</span> Submission</h1>
+<p>Since we will use auto-grading scripts in order to test your programs, they have to strictly follow the specified output format.</p>
+<h2 id="content"><span class="header-section-number">6.1</span> Content</h2>
+<p>You should submit the following files:</p>
+<ul>
+<li><p><code>AUTHORS</code>: student ID of each partner, one entry per line. For example:</p>
+<pre class="console"><code>$ cat AUTHORS
+00010001
+00010002
+$</code></pre></li>
+<li><p><code>report.pdf</code>: the report file containing the description of both your testers, and your CFS implementation, as explained above.</p></li>
+<li><code>Makefile</code>: a Makefile that compiles your source code without any errors or warnings (on CSIF computers), and builds executable <code>cfs_sched</code>.
+<ul>
+<li>The compiler should be run with the options <code>-Wall -Werror -std=c++11</code>.</li>
+<li>There should also be a <code>clean</code> rule that removes generated files and puts the directory back in its original state.</li>
+</ul></li>
+<li><p><code>llrb_map.h</code>, <code>llrb_multimap.h</code>, <code>map_tester.cc</code>, and <code>multimap_tester.cc</code>, for the first phase.</p></li>
+<li><p><code>cfs_sched.cc</code> for the second phase.</p></li>
+</ul>
+<p>Your submission should be empty of any clutter files (such as executable files, core dumps, backup files and so on).</p>
+<h2 id="zip-archive"><span class="header-section-number">6.2</span> Zip archive</h2>
+<p>For this homework, you will create and submit a zip archive file named <code>p4.zip</code>. In the directory containing your files, type in the following command:</p>
+<pre class="console"><code>$ $ zip p4.zip &lt;files to be included&gt;...
+  adding: &lt;file&gt; (deflated 56%)
+...</code></pre>
+<p>It should create the file <code>p4.zip</code> that you will submit via <code>handin</code>.</p>
+<p>Before submitting, <strong>do make sure</strong> that your archive was properly packaged by extracting it to another directory and verifying that all files are there:</p>
+<pre class="console"><code>$ cd /path/to/tmp/dir
+$ unzip /path/to/p4.zip
+Archive:  /path/to/p4.zip
+  inflating: &lt;file&gt;
+...</code></pre>
+<h2 id="handin"><span class="header-section-number">6.3</span> Handin</h2>
+<p>Your archive file has to be submitted via <code>handin</code> from one of the CSIF computers by <strong>only one person of your group</strong>:</p>
+<pre class="console"><code>$ handin cs36c p4 p4.zip
+...
+$</code></pre>
+<p>You can verify that the file has been properly submitted:</p>
+<pre class="console"><code>$ handin cs36c p4
+The following input files have been received:
+...
+$</code></pre>
+<h1 id="academic-integrity"><span class="header-section-number">7</span> Academic integrity</h1>
+<p>You are expected to write this project <strong>from scratch</strong>, thus avoiding to use any existing source code available on the Internet. Asking someone else to write your code (e.g., on website such as Chegg.com) is not acceptable and will result in severe sanctions.</p>
+<p>Both partners are expected to work on the assignment, in equal parts.</p>
+<p>You must specify in your report any sources that you have viewed to help you complete this assignment. All of the submissions will be compared with MOSS to determine if students have excessively collaborated, or have used the work of past students.</p>
+<p>Any failure to respect the class rules, as explained above or in the syllabus, or the <a href="http://sja.ucdavis.edu/cac.html">UC Davis Code of Conduct</a> will automatically result in the matter being transferred to Student Judicial Affairs.</p>
+</body>
+</html>

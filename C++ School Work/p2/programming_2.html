@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Joël Porquet, PhD" />
+  <title>ECS 36C: Program #2</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+font-family: 'Noto Serif', serif;
+font-size: 10px;
+line-height: 1.5em;
+padding: 1em;
+width: 960px;
+margin: auto;
+background: #fefefe;
+position: relative;
+}
+
+.keyword{
+position: absolute;
+right: -15em;
+width: 10em;
+}
+
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+line-height: 125%;
+margin-top: 1em;
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2.5em;
+}
+h2 {
+font-size: 2em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+background: #f0f0f0;
+font-family: 'Noto Sans Mono', monospace;
+font-size: 95%;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 1em 0;
+}
+figure img {
+border: none;
+margin: 0 auto;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.author {
+font-size: 1.2em;
+
+}
+
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 12pt;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+a[href]:after {
+content: " (" attr(href) ")";
+}
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
+</style>
+  <style type="text/css">.hll { background-color: #ffffcc }
+.c { color: #408080; font-style: italic } 
+.err { border: 1px solid #FF0000 } 
+.k { color: #008000; font-weight: bold } 
+.o { color: #666666 } 
+.ch { color: #408080; font-style: italic } 
+.cm { color: #408080; font-style: italic } 
+.cp { color: #BC7A00 } 
+.cpf { color: #408080; font-style: italic } 
+.c1 { color: #408080; font-style: italic } 
+.cs { color: #408080; font-style: italic } 
+.gd { color: #A00000 } 
+.ge { font-style: italic } 
+.gr { color: #FF0000 } 
+.gh { color: #000080; font-weight: bold } 
+.gi { color: #00A000 } 
+.go { color: #888888 } 
+.gp { color: #000080; font-weight: bold } 
+.gs { font-weight: bold } 
+.gu { color: #800080; font-weight: bold } 
+.gt { color: #0044DD } 
+.kc { color: #008000; font-weight: bold } 
+.kd { color: #008000; font-weight: bold } 
+.kn { color: #008000; font-weight: bold } 
+.kp { color: #008000 } 
+.kr { color: #008000; font-weight: bold } 
+.kt { color: #B00040 } 
+.m { color: #666666 } 
+.s { color: #BA2121 } 
+.na { color: #7D9029 } 
+.nb { color: #008000 } 
+.nc { color: #0000FF; font-weight: bold } 
+.no { color: #880000 } 
+.nd { color: #AA22FF } 
+.ni { color: #999999; font-weight: bold } 
+.ne { color: #D2413A; font-weight: bold } 
+.nf { color: #0000FF } 
+.nl { color: #A0A000 } 
+.nn { color: #0000FF; font-weight: bold } 
+.nt { color: #008000; font-weight: bold } 
+.nv { color: #19177C } 
+.ow { color: #AA22FF; font-weight: bold } 
+.w { color: #bbbbbb } 
+.mb { color: #666666 } 
+.mf { color: #666666 } 
+.mh { color: #666666 } 
+.mi { color: #666666 } 
+.mo { color: #666666 } 
+.sa { color: #BA2121 } 
+.sb { color: #BA2121 } 
+.sc { color: #BA2121 } 
+.dl { color: #BA2121 } 
+.sd { color: #BA2121; font-style: italic } 
+.s2 { color: #BA2121 } 
+.se { color: #BB6622; font-weight: bold } 
+.sh { color: #BA2121 } 
+.si { color: #BB6688; font-weight: bold } 
+.sx { color: #008000 } 
+.sr { color: #BB6688 } 
+.s1 { color: #BA2121 } 
+.ss { color: #19177C } 
+.bp { color: #008000 } 
+.fm { color: #0000FF } 
+.vc { color: #19177C } 
+.vg { color: #19177C } 
+.vi { color: #19177C } 
+.vm { color: #19177C } 
+.il { color: #666666 } 
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ECS 36C: Program #2</h1>
+<p class="author">Joël Porquet, PhD</p>
+<p class="date">UC Davis, Fall 2018</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#changelog"><span class="toc-section-number">1</span> Changelog</a></li>
+<li><a href="#general-information"><span class="toc-section-number">2</span> General information</a></li>
+<li><a href="#program-1-postfix-expression-evaluation"><span class="toc-section-number">3</span> Program #1: Postfix expression evaluation</a></li>
+<li><a href="#program-2-air-luggage-management"><span class="toc-section-number">4</span> Program #2: Air luggage management</a></li>
+<li><a href="#report-document"><span class="toc-section-number">5</span> Report document</a></li>
+<li><a href="#submission"><span class="toc-section-number">6</span> Submission</a></li>
+<li><a href="#academic-integrity"><span class="toc-section-number">7</span> Academic integrity</a></li>
+</ul>
+</nav>
+<h1 id="changelog"><span class="header-section-number">1</span> Changelog</h1>
+<p><em>Note that the specifications for this programming assignment are subject to change at anytime for additional clarification. Make sure to always refer to the <strong>latest</strong> version.</em></p>
+<ul>
+<li>v5: Add <em>submission</em> as a rubric for grading</li>
+<li>v4: Make it crystal clear that you cannot use <code>std::queue</code> or <code>std::stack</code></li>
+<li>v3: All error messages should be printed to <code>std::cerr</code></li>
+<li>v2: Code should be compiled with option <code>-std=c++11</code></li>
+<li>v1: First publication</li>
+</ul>
+<h1 id="general-information"><span class="header-section-number">2</span> General information</h1>
+<ul>
+<li>Due before <strong>7:00 PM, Thursday, October 18th, 2018</strong></li>
+<li>You are to work <strong>alone</strong> for this programming assignment</li>
+<li>The reference work environment is the CSIF</li>
+</ul>
+<h2 id="objectives-of-the-assignment"><span class="header-section-number">2.1</span> Objectives of the assignment</h2>
+<p>The objectives of this programming assignment are:</p>
+<ul>
+<li>Understanding the implementation of stacks and queue containers.</li>
+<li>Using the stack and queue containers in applications.</li>
+<li>Writing high-quality C++ code by following established industry standards.</li>
+<li>Learning how to describe code with text in a succinct and useful way.</li>
+</ul>
+<h2 id="constraints"><span class="header-section-number">2.2</span> Constraints</h2>
+<p>Your program(s) must be compatible with C++11, be compiled with GNU g++, and only use the standard functions provided by the <a href="https://en.wikipedia.org/wiki/C%2B%2B_Standard_Library">C++ Standard Library</a>. Your program cannot be linked to any other external libraries (e.g., Boost).</p>
+<p>Your code must follow the <a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a> and be properly commented when necessary. Use <code>cpplint</code> to ensure that your code conforms to the style guide.</p>
+<h2 id="assessment"><span class="header-section-number">2.3</span> Assessment</h2>
+<p>Your grade for this assignment will be broken down in several scores:</p>
+<ul>
+<li><p>Auto-grading: ~60% of grade</p>
+<p>Running an auto-grading script that tests your programs and checks their output against various inputs</p></li>
+<li><p>Manual review: ~40% of grade</p>
+<p>The manual review is itself broken down into different rubrics:</p>
+<ul>
+<li>Submission: ~5%</li>
+<li>Report file: ~25%</li>
+<li>Quality of implementation: ~50%</li>
+<li>Code style: ~10%</li>
+<li>Makefile: ~10%</li>
+</ul></li>
+</ul>
+<h1 id="program-1-postfix-expression-evaluation"><span class="header-section-number">3</span> Program #1: Postfix expression evaluation</h1>
+<h2 id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
+<p>My mum, who is now happily retired, used to be a nuclear physicist. During most of her career, she used one of these ancient calculators made by HP in the 1980s, which were well known for their use of Revere Polish Notation, also known as postfix notation. It used to drive me crazy because it is a real brain effort to write postfix expressions instead of the standard infix expressions we are all used to.</p>
+<p>For example, the infix expression <code>3 + 4</code> would be written <code>3 4 +</code> in postfix notation. More complicated, the infix expression <code>((15 / (7 - (1 + 1))) * 3) - (2 + (1 + 1))</code> would be written <code>15 7 1 1 + - / 3 * 2 1 1 + + -</code>. In the second example, we understand one of the main advantages of postfix expressions: they do not need parentheses! The order of evaluation is always explicit.</p>
+<p>Interestingly enough, it is much easier to solve postfix expressions from a programming point of view, by using a single value stack.</p>
+<h2 id="goal"><span class="header-section-number">3.2</span> Goal</h2>
+<p>Write a program named <code>postfix_eval.cc</code> that reads postfix expressions from the standard input and evaluates them, until there is no more expressions to read.</p>
+<p>A postfix expression is a line of input composed of numbers (<code>double</code>) and operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>).</p>
+<p>Any errors detected in the expression should be reported on the screen. Error do not stop the program, incorrect expressions are reported as invalid and are simply ignored.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ./postfix_eval
+<span class="go">1 3 +</span>
+<span class="go">4</span>
+<span class="go">2 3 1 * + 9 -</span>
+<span class="go">-4</span>
+<span class="go">3.14 2 *</span>
+<span class="go">6.28</span>
+<span class="go">1 3 /</span>
+<span class="go">0.333333</span>
+<span class="go">Bye!</span>
+<span class="gp">$</span> ./postfix_eval
+<span class="go">3 4</span>
+<span class="go">Error: invalid expression</span>
+<span class="go">4 +</span>
+<span class="go">Error: invalid expression</span>
+<span class="go">3 456 $</span>
+<span class="go">Error: unknown symbol &#39;$&#39;</span>
+<span class="go">12 34 45 *</span>
+<span class="go">Error: invalid expression</span>
+<span class="go">Bye!</span>
+<span class="gp">$</span> <span class="nb">echo</span> <span class="nv">$?</span>
+<span class="go">0</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>A working example of the program can be found at <code>/home/cs36c/public/p2/postfix_eval_reference</code>.</p>
+<h2 id="additional-information-and-constraints"><span class="header-section-number">3.3</span> Additional information and constraints</h2>
+<ul>
+<li>You cannot use <code>std::stack</code> and have to provide a stack implementation with your code.</li>
+<li>You can reuse the stack implementation provided on Canvas, as part of the lecture material.</li>
+<li>You are allowed to implement additional and <em>relevant</em> methods to the stack implementation (e.g., <code>IsEmpty()</code>).</li>
+<li>In order to simulate the end of the input stream and quit the program, you can press <code>&lt;Ctrl+D&gt;</code> on the keyboard.</li>
+<li><p>You can efficiently test your program by <em>piping</em> the expressions from the command line. Example:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">echo</span> -e <span class="s2">&quot;3 42 +&quot;</span> <span class="p">|</span> ./postfix_eval
+<span class="go">45</span>
+<span class="go">Bye!</span>
+<span class="gp">$</span> <span class="nb">echo</span> -e <span class="s2">&quot;3 42 +\n2 3 1 * + 9 -&quot;</span> <span class="p">|</span> ./postfix_eval
+<span class="go">45</span>
+<span class="go">-4</span>
+<span class="go">Bye!</span>
+<span class="gp">$</span> <span class="nb">echo</span> -e <span class="s2">&quot;23 )&quot;</span> <span class="p">|</span> ./postfix_eval
+<span class="go">Error: unknown symbol &#39;)&#39;</span>
+<span class="go">Bye!</span>
+<span class="gp">$</span>
+</pre></div>
+
+<ul>
+<li>You can even write a few test-cases in a script file and have your program tested automatically. This is pretty much what the auto-grading script will do!</li>
+</ul></li>
+<li><p>All error messages should be written to <code>std::cerr</code>.</p></li>
+</ul>
+<h1 id="program-2-air-luggage-management"><span class="header-section-number">4</span> Program #2: Air luggage management</h1>
+<h2 id="introduction-1"><span class="header-section-number">4.1</span> Introduction</h2>
+<p>Sacramento International Airport (SMF) is trying to better understand the process of luggage loading and unloading into airplanes to make it more efficient. The first step towards this goal is to create a computational model of the process.</p>
+<p>Before departure, luggage is loaded into containers as the luggage from passengers arrives. When a container is full, or there is no more luggage, it is loaded into the airplane.</p>
+<p>After arriving at destination, the containers are unloaded with the last on being the first off. As each container is unloaded, the bags it contains are unloaded in the same order they were loaded, i.e., last on being last off.</p>
+<h2 id="goal-1"><span class="header-section-number">4.2</span> Goal</h2>
+<p>Write a program named <code>luggage_handling.cc</code> that receives two command line arguments, the name of an input file and a number. The file contains a list of bags (each represented by a unique integer), in the order that they arrive. The number on the command line (a positive integer) indicates the number of bag each container can hold.</p>
+<p>Your program should output to the screen the order of the bags as they are unloaded, as shown in the example below.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat bags25.dat
+<span class="go">16 24 25 3 20 18 7 17 4 15 13 22 2 12 10 5 8 1 11 21 19 6 23 9 14</span>
+<span class="gp">$</span> ./luggage_handling bags25.dat <span class="m">7</span>
+<span class="go">6 23 9 14 10 5 8 1 11 21 19 17 4 15 13 22 2 12 16 24 25 3 20 18 7 </span>
+<span class="gp">$</span> ./luggage_handling bags25.dat <span class="m">10</span>
+<span class="go">19 6 23 9 14 13 22 2 12 10 5 8 1 11 21 16 24 25 3 20 18 7 17 4 15 </span>
+<span class="gp">$</span>
+<span class="gp">$</span> ./luggage_handling
+<span class="go">Usage: ./luggage_handling &lt;input_file&gt; &lt;container_size&gt;</span>
+<span class="gp">$</span> ./luggage_handling bags25.dat
+<span class="go">Usage: ./luggage_handling &lt;input_file&gt; &lt;container_size&gt;</span>
+<span class="gp">$</span> ./luggage_handling wrong_file <span class="m">7</span>
+<span class="go">Error: cannot open file wrong_file</span>
+<span class="gp">$</span> ./luggage_handling bags25.dat -1
+<span class="go">Error: invalid container size</span>
+<span class="gp">$</span> <span class="nb">echo</span> <span class="nv">$?</span>
+<span class="go">1</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>A working example of the program can be found at <code>/home/cs36c/public/p2/luggage_handling_reference</code>.</p>
+<h2 id="additional-information-and-constraints-1"><span class="header-section-number">4.3</span> Additional information and constraints</h2>
+<ul>
+<li>This program uses a clever use of stacks and queues. You can use pointers to queues and/or pointers to stacks, if it makes sense.</li>
+<li>You cannot use <code>std::stack</code> or <code>std::queue</code> and have to provide a stack implementation with your code.</li>
+<li>You can reuse the stack and queue implementations provided on Canvas, as part of the lecture material.</li>
+<li>For this program, you should implement a bounded queue. A bounded queue receives a maximum capacity at its creation and cannot enqueue more than this capacity.</li>
+<li>You are allowed to implement additional and <em>relevant</em> methods to the queue and stack implementations (e.g., <code>IsEmpty()</code> or <code>IsFull()</code>).</li>
+<li>All error messages should be written to <code>std::cerr</code> and the program should exit with return code <code>1</code> upon error.</li>
+<li>Some input samples are provided in <code>/home/cs36c/public/p2/bags{25,37,100}.dat</code>.</li>
+</ul>
+<h1 id="report-document"><span class="header-section-number">5</span> Report document</h1>
+<p>Write a report file in <code>report.pdf</code>, in which you describe your two programs. The objective of this report is not to paraphrase the code, nor to repeat the assignment, but to succinctly explain the logic of your code.</p>
+<p>The report should be up to one page maximum, and each program should be described in a few short paragraphs.</p>
+<h1 id="submission"><span class="header-section-number">6</span> Submission</h1>
+<p>Since we will use auto-grading scripts in order to test your programs, they have to strictly follow the specified output format.</p>
+<h2 id="content"><span class="header-section-number">6.1</span> Content</h2>
+<p>You should submit the following files:</p>
+<ul>
+<li><p><code>AUTHORS</code>: your student ID, on one line. For example:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat AUTHORS
+<span class="go">00010001</span>
+<span class="gp">$</span>
+</pre></div>
+</li>
+<li><p><code>report.pdf</code>: the report file containing the description of your two programs, as explained above.</p></li>
+<li><code>Makefile</code>: a Makefile that compiles your source code without any errors or warnings (on CSIF computers), and builds two executables named <code>postfix_eval</code> and <code>luggage_handling</code>.
+<ul>
+<li>The compiler should be run with the options <code>-Wall -Werror -std=c++11</code>.</li>
+<li>There should also be a <code>clean</code> rule that removes generated files and puts the directory back in its original state.</li>
+</ul></li>
+<li><p><code>postfix_eval.cc</code>, <code>luggage_handling.cc</code>, and any other source code files if applicable.</p></li>
+</ul>
+<p>Your submission should be empty of any clutter files (such as executable files, core dumps, backup files and so on).</p>
+<h2 id="zip-archive"><span class="header-section-number">6.2</span> Zip archive</h2>
+<p>For this homework, you will create and submit a zip archive file named <code>p2.zip</code>. In the directory containing your files, type in the following commands:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> $ zip p2.zip luggage_handling.cc postfix_eval.cc &lt;other_files&gt;...
+<span class="go">  adding: luggage_handling.cc (deflated 56%)</span>
+<span class="go">  adding: postfix_eval.cc (deflated 66%)</span>
+<span class="go">...</span>
+</pre></div>
+
+<p>It should create the file <code>p2.zip</code> that you will submit via <code>handin</code>.</p>
+<p>Before submitting, <strong>do make sure</strong> that your archive was properly packaged by extracting it to another directory and verifying that all files are there:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> /path/to/tmp/dir
+<span class="gp">$</span> unzip /path/to/p2.zip
+<span class="go">Archive:  /path/to/p2.zip</span>
+<span class="go">  inflating: luggage_handling.cc</span>
+<span class="go">  inflating: postfix_eval.cc</span>
+<span class="go">...</span>
+</pre></div>
+
+<h2 id="handin"><span class="header-section-number">6.3</span> Handin</h2>
+<p>Your archive file has to be submitted via <code>handin</code> from one of the CSIF computers:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> handin cs36c p2 p2.zip
+<span class="go">...</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>You can verify that the file has been properly submitted:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> handin cs36c p2
+<span class="go">The following input files have been received:</span>
+<span class="go">...</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h1 id="academic-integrity"><span class="header-section-number">7</span> Academic integrity</h1>
+<p>You are expected to write this project <strong>from scratch</strong>, thus avoiding to use any existing source code available on the Internet, and <strong>alone</strong>. Asking someone else to write your code (e.g., on website such as Chegg.com) is not acceptable and will result in severe sanctions.</p>
+<p>You must specify in your report any sources that you have viewed to help you complete this assignment. All of the submissions will be compared with MOSS to determine if students have excessively collaborated, or have used the work of past students.</p>
+<p>Any failure to respect the class rules, as explained above or in the syllabus, or the <a href="http://sja.ucdavis.edu/cac.html">UC Davis Code of Conduct</a> will automatically result in the matter being transferred to Student Judicial Affairs.</p>
+</body>
+</html>

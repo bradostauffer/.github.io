@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Joël Porquet, PhD" />
+  <title>ECS 36C: Program #1</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+html {
+font-size: 100%;
+overflow-y: scroll;
+-webkit-text-size-adjust: 100%;
+-ms-text-size-adjust: 100%;
+}
+body {
+color: #444;
+font-family: 'Noto Serif', serif;
+font-size: 10px;
+line-height: 1.5em;
+padding: 1em;
+width: 960px;
+margin: auto;
+background: #fefefe;
+position: relative;
+}
+
+.keyword{
+position: absolute;
+right: -15em;
+width: 10em;
+}
+
+a {
+color: #0645ad;
+text-decoration: none;
+}
+a:visited {
+color: #0b0080;
+}
+a:hover {
+color: #06e;
+}
+a:active {
+color: #faa700;
+}
+a:focus {
+outline: thin dotted;
+}
+
+*::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+*::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #000;
+}
+a::-moz-selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+a::selection {
+background: rgba(255, 255, 0, 0.3);
+color: #0645ad;
+}
+
+p {
+margin: 1em 0;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+color: #111;
+line-height: 125%;
+margin-top: 1em;
+font-weight: normal;
+}
+h4, h5, h6 {
+font-weight: bold;
+}
+h1 {
+font-size: 2.5em;
+}
+h2 {
+font-size: 2em;
+}
+h3 {
+font-size: 1.5em;
+}
+h4 {
+font-size: 1.2em;
+}
+h5 {
+font-size: 1em;
+}
+h6 {
+font-size: 0.9em;
+}
+blockquote {
+color: #666666;
+margin: 0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr {
+display: block;
+height: 2px;
+border: 0;
+border-top: 1px solid #aaa;
+border-bottom: 1px solid #eee;
+margin: 1em 0;
+padding: 0;
+}
+pre, code, kbd, samp {
+color: #000;
+background: #f0f0f0;
+font-family: 'Noto Sans Mono', monospace;
+font-size: 95%;
+}
+pre {
+white-space: pre;
+white-space: pre-wrap;
+word-wrap: break-word;
+}
+b, strong {
+font-weight: bold;
+}
+dfn {
+font-style: italic;
+}
+ins {
+background: #ff9;
+color: #000;
+text-decoration: none;
+}
+mark {
+background: #ff0;
+color: #000;
+font-style: italic;
+font-weight: bold;
+}
+sub, sup {
+font-size: 75%;
+line-height: 0;
+position: relative;
+vertical-align: baseline;
+}
+sup {
+top: -0.5em;
+}
+sub {
+bottom: -0.25em;
+}
+ul, ol {
+margin: 1em 0;
+padding: 0 0 0 2em;
+}
+li p:last-child {
+margin-bottom: 0;
+}
+ul ul, ol ol {
+margin: .3em 0;
+}
+dl {
+margin-bottom: 1em;
+}
+dt {
+font-weight: bold;
+margin-bottom: .8em;
+}
+dd {
+margin: 0 0 .8em 2em;
+}
+dd:last-child {
+margin-bottom: 0;
+}
+img {
+border: 0;
+-ms-interpolation-mode: bicubic;
+vertical-align: middle;
+}
+figure {
+display: block;
+text-align: center;
+margin: 1em 0;
+}
+figure img {
+border: none;
+margin: 0 auto;
+}
+figcaption {
+font-size: 0.8em;
+font-style: italic;
+margin: 0 0 .8em;
+}
+
+table {
+margin-bottom: 2em;
+border-bottom: 1px solid #ddd;
+border-right: 1px solid #ddd;
+border-spacing: 0;
+border-collapse: collapse;
+}
+table th {
+padding: .2em 1em;
+background-color: #eee;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+}
+table td {
+padding: .2em 1em;
+border-top: 1px solid #ddd;
+border-left: 1px solid #ddd;
+vertical-align: top;
+}
+.author {
+font-size: 1.2em;
+
+}
+
+@media only screen and (min-width: 480px) {
+body {
+font-size: 14px;
+}
+}
+@media only screen and (min-width: 768px) {
+body {
+font-size: 16px;
+}
+}
+@media print {
+* {
+background: transparent !important;
+color: black !important;
+filter: none !important;
+-ms-filter: none !important;
+}
+body {
+font-size: 12pt;
+max-width: 100%;
+}
+a, a:visited {
+text-decoration: underline;
+}
+hr {
+height: 1px;
+border: 0;
+border-bottom: 1px solid black;
+}
+a[href]:after {
+content: " (" attr(href) ")";
+}
+abbr[title]:after {
+content: " (" attr(title) ")";
+}
+.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+content: "";
+}
+pre, blockquote {
+border: 1px solid #999;
+padding-right: 1em;
+page-break-inside: avoid;
+}
+tr, img {
+page-break-inside: avoid;
+}
+img {
+max-width: 100% !important;
+}
+@page :left {
+margin: 15mm 20mm 15mm 10mm;
+}
+@page :right {
+margin: 15mm 10mm 15mm 20mm;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3 {
+page-break-after: avoid;
+}
+}
+</style>
+  <style type="text/css">.hll { background-color: #ffffcc }
+.c { color: #408080; font-style: italic } 
+.err { border: 1px solid #FF0000 } 
+.k { color: #008000; font-weight: bold } 
+.o { color: #666666 } 
+.ch { color: #408080; font-style: italic } 
+.cm { color: #408080; font-style: italic } 
+.cp { color: #BC7A00 } 
+.cpf { color: #408080; font-style: italic } 
+.c1 { color: #408080; font-style: italic } 
+.cs { color: #408080; font-style: italic } 
+.gd { color: #A00000 } 
+.ge { font-style: italic } 
+.gr { color: #FF0000 } 
+.gh { color: #000080; font-weight: bold } 
+.gi { color: #00A000 } 
+.go { color: #888888 } 
+.gp { color: #000080; font-weight: bold } 
+.gs { font-weight: bold } 
+.gu { color: #800080; font-weight: bold } 
+.gt { color: #0044DD } 
+.kc { color: #008000; font-weight: bold } 
+.kd { color: #008000; font-weight: bold } 
+.kn { color: #008000; font-weight: bold } 
+.kp { color: #008000 } 
+.kr { color: #008000; font-weight: bold } 
+.kt { color: #B00040 } 
+.m { color: #666666 } 
+.s { color: #BA2121 } 
+.na { color: #7D9029 } 
+.nb { color: #008000 } 
+.nc { color: #0000FF; font-weight: bold } 
+.no { color: #880000 } 
+.nd { color: #AA22FF } 
+.ni { color: #999999; font-weight: bold } 
+.ne { color: #D2413A; font-weight: bold } 
+.nf { color: #0000FF } 
+.nl { color: #A0A000 } 
+.nn { color: #0000FF; font-weight: bold } 
+.nt { color: #008000; font-weight: bold } 
+.nv { color: #19177C } 
+.ow { color: #AA22FF; font-weight: bold } 
+.w { color: #bbbbbb } 
+.mb { color: #666666 } 
+.mf { color: #666666 } 
+.mh { color: #666666 } 
+.mi { color: #666666 } 
+.mo { color: #666666 } 
+.sa { color: #BA2121 } 
+.sb { color: #BA2121 } 
+.sc { color: #BA2121 } 
+.dl { color: #BA2121 } 
+.sd { color: #BA2121; font-style: italic } 
+.s2 { color: #BA2121 } 
+.se { color: #BB6622; font-weight: bold } 
+.sh { color: #BA2121 } 
+.si { color: #BB6688; font-weight: bold } 
+.sx { color: #008000 } 
+.sr { color: #BB6688 } 
+.s1 { color: #BA2121 } 
+.ss { color: #19177C } 
+.bp { color: #008000 } 
+.fm { color: #0000FF } 
+.vc { color: #19177C } 
+.vg { color: #19177C } 
+.vi { color: #19177C } 
+.vm { color: #19177C } 
+.il { color: #666666 } 
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ECS 36C: Program #1</h1>
+<p class="author">Joël Porquet, PhD</p>
+<p class="date">UC Davis, Fall 2018</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#changelog"><span class="toc-section-number">1</span> Changelog</a></li>
+<li><a href="#general-information"><span class="toc-section-number">2</span> General information</a></li>
+<li><a href="#objectives-of-the-assignment"><span class="toc-section-number">3</span> Objectives of the assignment</a></li>
+<li><a href="#program-description"><span class="toc-section-number">4</span> Program description</a></li>
+<li><a href="#suggested-work-phases"><span class="toc-section-number">5</span> Suggested work phases</a></li>
+<li><a href="#submission"><span class="toc-section-number">6</span> Submission</a></li>
+<li><a href="#academic-integrity"><span class="toc-section-number">7</span> Academic integrity</a></li>
+</ul>
+</nav>
+<h1 id="changelog"><span class="header-section-number">1</span> Changelog</h1>
+<p><em>Note that the specifications for this project are subject to change at anytime for additional clarification. Make sure to always refer to the <strong>latest</strong> version.</em></p>
+<ul>
+<li>v8: Specify on which stream the incorrect choice message should be printed</li>
+<li>v7: Fix timing measurement snippet of code</li>
+<li>v6: Remove debug line (showing vector/magnitude match) from output example</li>
+<li>v5: Error management</li>
+<li>v4: Make the instructions regarding the command line arguments clearer</li>
+<li>v3: Deactivate the linter for the inclusion of <code>chrono</code></li>
+<li>v2: Fix square root sign in definition of magnitude</li>
+<li>v1: First publication</li>
+</ul>
+<h1 id="general-information"><span class="header-section-number">2</span> General information</h1>
+<ul>
+<li>Due before <strong>7:00 PM, Thursday, October 11th, 2018</strong></li>
+<li>You are to work <strong>alone</strong> for this programming assignment</li>
+<li>The reference work environment is the CSIF</li>
+</ul>
+<h1 id="objectives-of-the-assignment"><span class="header-section-number">3</span> Objectives of the assignment</h1>
+<p>The objectives of this programming assignment are:</p>
+<ul>
+<li>Reviewing most of the concepts learned in ECS 30 and ECS 40 (object-oriented programming, file manipulation, command line arguments, operator overloading, Makefile, etc.)</li>
+<li>Understanding how computational complexity can apply to real-life programs.</li>
+<li>Running test measurements and analysing the results in order to provide an argued answer to the given problem.</li>
+<li>Writing high-quality C++ code by following established industry standards.</li>
+</ul>
+<h1 id="program-description"><span class="header-section-number">4</span> Program description</h1>
+<h2 id="introduction"><span class="header-section-number">4.1</span> Introduction</h2>
+<p>A team of biologists at UC Davis are planning to carry out a big research study, to better understand the impact of climate change and its effect on wildlife during forest fires. They have already chosen a special location, at the center of a forest, and will set up hundreds of sensors all around this center to collect data. The sensors will be activated when they detect animal movement and will record the distance from such event to the center. After the experiment, their goal is to be able to search for specific distances in their datasets.</p>
+<p>Each events will be recorded as a position vector (<img style="vertical-align:middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAMBAMAAABhKdtFAAAAMFBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAv3aB7AAAAD3RSTlMAVGaJRKsi7zLNEJl23buB3ZRqAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAjUlEQVQIHWNgEDIRCmMAAg5pBsYABpaEdIEKEHcRewOrAQMjgzuIw8DgkM/A7gCkTUEcIDBl6AdRk0AEEFxkOAkkub4xOIB4DL8YHjMwuDN94EhgiwJx2b4wMHRLCIswcBQBucrKv0CKQIARRPA8AJEgAOSyO/A6gNlA4hQDw2oGaxiPQYCBgUlZgYEBAAFjFVRh9EG8AAAAAElFTkSuQmCC" alt="x, y" title="x, y" />). The distance of an event is computed as the vector’s magnitude: <img style="vertical-align:middle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ0AAAAXBAMAAADjI1BbAAAAMFBMVEX///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAv3aB7AAAAD3RSTlMAibsyEGaZds0i791URKvr/M2pAAAACXBIWXMAAA7EAAAOxAGVKw4bAAACRUlEQVQ4EbVUvYsTQRT/ZT8Sk9ucgmAhnETwD9jKUoOgh1ZJZyPmL5CTs7CwSCNYphO0iCD2FjbCIRHvo1FYC1GvyoGNhUvENFdI/L03M9Hd7AZS+AZm3rzfB29mkgVWjWC2JCarugHVeHXNMsWVZSBwigNBJ0sK20CFoyg2tBjd7S2AB2dYanGgmsOCHuBxFETQ0uImjvJgsLXO1tRvO499LvWrjZT7BTfzmmY/7Fs/rtk4UepHRKIOOVw2BpWe8Qtz1wewi5LzPnAer01yy+25rg2Mn8c1G/64zK9vieuJSf71+8FSi6PBdW9j77sw/H1EY+BZiZ8cRanbdWEDxk9Vtdj2R7/m4MnoueBXG7E806TEj9en1Gj3sbCdn6reX98y/T0FIhwaPBmikQCvnN+dlHEkWEA2Dix1OPtp+KY/UX2dzdiInJd+wDmDc73MbO5nq1wuTTn1Ze+oqKbpozSli1UxEb8bQnooE2MH9zkX3F/MjiLpcU6V3L6HUXEvfvIewTESwTHFec5zv7/nxVnAaxObU5k7P6PiXvz4ezkMJ/6g/o2Faf03X3ns7k80NoYdfGSqVFeb+4lKQvz4I7j47u0H+C9Y6HZ5T7VRgZ/3EhdIUKpINex5VSUF8QtaCsnTMWrcFf7fmr/8HvFsWD9VCSJ+OG059Gska7zHT7wqjly88dq5CmAqRiWg+rnv1T3gmvzRS75Xt/cX7GxBVZqrn/uejoCw2+HULuzv5LGVLyyq0mqMeAHVgg8/D1TG+cp/3/8BhGyfqDQ/UQgAAAAASUVORK5CYII=" alt="\|(x, y)\| = \sqrt{x^2 + y^2}" title="\|(x, y)\| = \sqrt{x^2 + y^2}" />.</p>
+<p>The problem is that they don’t yet know how many position vectors they will collect and how many magnitudes they will want to search and analyse.</p>
+<ul>
+<li><p>On one hand, if the amount of position vectors is big, but they only need to search a few magnitudes within it, then using a linear search with a list of unordered vectors might be enough.</p></li>
+<li><p>On the other hand, if they end up having to search a significant amount of magnitudes, then paying the one time cost to sort the list of vectors and using a binary search might be worth it.</p></li>
+</ul>
+<p>This team of biologists is at the top of their field but none of them has taken ECS 36C so they don’t know much about computational complexity. That is why they are asking you to help figure out this problem and submit your educated opinion!</p>
+<h2 id="goal-1-program"><span class="header-section-number">4.2</span> Goal #1: program</h2>
+<p>Write a program named <code>vector_search.cc</code>, that receives a file containing a list of unordered positional vectors and a file containing a list of magnitudes. According to the user’s choice, the program performs either a linear search or a binary search in order to find the given magnitudes within the list of vectors. It finally prints the search performance on the screen and saves the number of magnitudes that were found in an output file.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat vectors_1.dat     <span class="c1"># Print list of unordered positional vectors</span>
+<span class="go">4 4</span>
+<span class="go">8 4</span>
+<span class="go">-8 -6</span>
+<span class="go">5 3</span>
+<span class="go">-5 1</span>
+<span class="go">-2 2</span>
+<span class="go">10 1</span>
+<span class="go">-1 5</span>
+<span class="go">-6 -3</span>
+<span class="go">7 2</span>
+<span class="gp">$</span> cat magnitudes_1.dat  <span class="c1"># Print list of magnitudes</span>
+<span class="go">1</span>
+<span class="go">5</span>
+<span class="go">17</span>
+<span class="go">12</span>
+<span class="go">15</span>
+<span class="gp">$</span> ./vector_search vectors_1.dat magnitudes_1.dat res_1.dat  <span class="c1"># Run program</span>
+<span class="go">Choice of search method ([l]inear, [b]inary)?</span>
+<span class="go">l</span>
+<span class="go">CPU time: 10.777 microseconds</span>
+<span class="gp">$</span> cat res_1.dat         <span class="c1"># Print number of matches found (one match found: (4,4) =&gt; 5)</span>
+<span class="go">1</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>A working example of the program can be found at <code>/home/cs36c/public/p1/vector_search_reference</code>.</p>
+<h2 id="goal-2-measurement-analysis"><span class="header-section-number">4.3</span> Goal #2: measurement analysis</h2>
+<p>By running the program multiple times and with inputs of different sizes (see dataset generator explained below), explain the pros and cons of linear search versus sorting first and using binary search, with respect to computational complexity. Try to explain if it is possible to determine a ratio between the number of vectors and the number of magnitudes to search, that makes either linear search or binary search the best option.</p>
+<h2 id="constraints"><span class="header-section-number">4.4</span> Constraints</h2>
+<p>Your program must be compatible with C++11, be compiled with GNU g++, and only use the standard functions provided by the <a href="https://en.wikipedia.org/wiki/C%2B%2B_Standard_Library">C++ Standard Library</a>. Your program cannot be linked to any other external libraries (e.g., Boost).</p>
+<p>Your code must follow the <a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a> and be properly commented when necessary.</p>
+<h2 id="assessment"><span class="header-section-number">4.5</span> Assessment</h2>
+<p>Your grade for this assignment will be broken down in several scores:</p>
+<ul>
+<li><p>Auto-grading: ~60% of grade</p>
+<p>Running an auto-grading script that tests your program and checks the output against various inputs</p></li>
+<li><p>Manual review: ~40% of grade</p>
+<p>The manual review is itself broken down into different rubrics:</p>
+<ul>
+<li>Report file: ~50%</li>
+<li>Quality of implementation: ~30%</li>
+<li>Code style: ~10%</li>
+<li>Makefile: ~10%</li>
+</ul></li>
+</ul>
+<h1 id="suggested-work-phases"><span class="header-section-number">5</span> Suggested work phases</h1>
+<h2 id="phase-0-preliminary-work"><span class="header-section-number">5.1</span> Phase 0: preliminary work</h2>
+<h3 id="copy-files"><span class="header-section-number">5.1.1</span> 0.1 Copy files</h3>
+<p>In this preliminary phase, copy the few provided files from <code>/home/cs36c/public/p1/</code> to your project directory:</p>
+<ul>
+<li><p><code>vector_search.cc</code>: an (almost empty but compilable) skeleton C++ file that you will need to complete in the next phases.</p></li>
+<li><p><code>create_dataset</code>: a program that generates fake datasets in order to test your program with inputs of various sizes.</p>
+<p>It expects three command line arguments when being run:</p>
+<ol type="1">
+<li>The number of position vectors to generate in the output vector file</li>
+<li>The number of magnitudes to generate in the output magnitude file</li>
+<li>The suffix to be applied to the generated filenames (i.e., <code>_&lt;suffix&gt;</code> is added at the end of the filename)</li>
+</ol>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ./create_dataset <span class="m">5</span> <span class="m">3</span> <span class="m">1</span>
+<span class="gp">$</span> ls *.dat
+<span class="go">magnitudes_1.dat  vectors_1.dat</span>
+<span class="gp">$</span> cat vectors_1.dat         <span class="c1"># 5 vectors were generated</span>
+<span class="go">4 4</span>
+<span class="go">8 4</span>
+<span class="go">-8 -6</span>
+<span class="go">5 3</span>
+<span class="go">-5 1</span>
+<span class="gp">$</span> cat magnitudes_1.dat      <span class="c1"># 3 magnitudes were generated</span>
+<span class="go">1</span>
+<span class="go">5</span>
+<span class="go">17</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>The source code is available in <code>create_dataset.cc</code> for you to examine if it helps.</p></li>
+<li><p><code>CPPLINT.cfg</code>: a configuration file for <a href="https://en.wikipedia.org/wiki/Cpplint">cpplint</a>, the C++ linter developed by Google to ensure that code conforms to their style guide.</p>
+<p>With this configuration file located in the same directory as your program, you can run the linter as shown in the example below and fix the reported warnings:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> /home/cs36c/public/cpplint/cpplint vector_search.cc
+<span class="go">Done processing vector_search.cc</span>
+<span class="go">Total errors found: 0</span>
+<span class="gp">$</span>
+</pre></div>
+</li>
+</ul>
+<h3 id="makefile"><span class="header-section-number">5.1.2</span> 0.2 Makefile</h3>
+<p>Write a simple Makefile that generates the executable <code>vector_search</code> from the file <code>vector_search.cc</code>, using g++.</p>
+<p>The compiler should be run with the <code>-Wall</code> (enable all warnings) and <code>-Werror</code> (treat all warnings as errors) options.</p>
+<p>There should also be a <code>clean</code> rule that removes any generated files (executables, datasets, etc.) and puts the directory back in its original state.</p>
+<p>Optionally, you can add other rules to your Makefile, such as a <code>lint</code> rule which runs the linter automatically.</p>
+<h2 id="phase-1-reading-in-the-dataset"><span class="header-section-number">5.2</span> Phase 1: reading in the dataset</h2>
+<p>In this phase, your program should receive two filenames as command line arguments, the vector file and magnitude file, which the program should read in. The vectors and magnitudes should be stored in two <a href="https://en.cppreference.com/w/cpp/container/vector"><code>std::vector</code></a> containers.</p>
+<p>Because some code to open these two files will probably be equivalent, you are encourage to write generic functions in order to avoid code duplication.</p>
+<h3 id="vector-file"><span class="header-section-number">5.2.1</span> Vector file</h3>
+<p>The first file contains a list of positional vectors, one per line. Each line has two integer values, separated by a space. The first value is the x value, the second value is the y value.</p>
+<p>Example of vector file:</p>
+<div class="columns">
+<div class="column">
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat vectors_1.dat
+<span class="go">5 7</span>
+<span class="go">-2 1</span>
+<span class="go">...</span>
+</pre></div>
+
+</div><div class="column">
+<figure>
+<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICB3aWR0aD0iNDMuMzc3NzkybW0iCiAgIGhlaWdodD0iNDMuMzc3NzkybW0iCiAgIHZpZXdCb3g9IjAgMCA0My4zNzc3OTIgNDMuMzc3NzkyIgogICB2ZXJzaW9uPSIxLjEiCiAgIGlkPSJzdmc4IgogICBpbmtzY2FwZTp2ZXJzaW9uPSIwLjkyLjIgMjQwNTU0NiwgMjAxOC0wMy0xMSIKICAgc29kaXBvZGk6ZG9jbmFtZT0idmVjdG9ycy5zdmciPgogIDxkZWZzCiAgICAgaWQ9ImRlZnMyIj4KICAgIDxtYXJrZXIKICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiCiAgICAgICBzdHlsZT0ib3ZlcmZsb3c6dmlzaWJsZSIKICAgICAgIGlkPSJtYXJrZXIxNzMxIgogICAgICAgcmVmWD0iMCIKICAgICAgIHJlZlk9IjAiCiAgICAgICBvcmllbnQ9ImF1dG8iCiAgICAgICBpbmtzY2FwZTpzdG9ja2lkPSJBcnJvdzFNZW5kIj4KICAgICAgPHBhdGgKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoLTAuNCwwLDAsLTAuNCwtNCwwKSIKICAgICAgICAgc3R5bGU9ImZpbGw6I2JhMGMyZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6I2JhMGMyZjtzdHJva2Utd2lkdGg6MS4wMDAwMDAwM3B0O3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICAgIGQ9Ik0gMCwwIDUsLTUgLTEyLjUsMCA1LDUgWiIKICAgICAgICAgaWQ9InBhdGgxNzI5IgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPC9tYXJrZXI+CiAgICA8bWFya2VyCiAgICAgICBpbmtzY2FwZTppc3N0b2NrPSJ0cnVlIgogICAgICAgc3R5bGU9Im92ZXJmbG93OnZpc2libGUiCiAgICAgICBpZD0ibWFya2VyMTY5MSIKICAgICAgIHJlZlg9IjAiCiAgICAgICByZWZZPSIwIgogICAgICAgb3JpZW50PSJhdXRvIgogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iQXJyb3cxTWVuZCI+CiAgICAgIDxwYXRoCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KC0wLjQsMCwwLC0wLjQsLTQsMCkiCiAgICAgICAgIHN0eWxlPSJmaWxsOiNiYTBjMmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiNiYTBjMmY7c3Ryb2tlLXdpZHRoOjEuMDAwMDAwMDNwdDtzdHJva2Utb3BhY2l0eToxIgogICAgICAgICBkPSJNIDAsMCA1LC01IC0xMi41LDAgNSw1IFoiCiAgICAgICAgIGlkPSJwYXRoMTY4OSIKICAgICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDwvbWFya2VyPgogICAgPG1hcmtlcgogICAgICAgaW5rc2NhcGU6aXNzdG9jaz0idHJ1ZSIKICAgICAgIHN0eWxlPSJvdmVyZmxvdzp2aXNpYmxlIgogICAgICAgaWQ9Im1hcmtlcjE2MzUiCiAgICAgICByZWZYPSIwIgogICAgICAgcmVmWT0iMCIKICAgICAgIG9yaWVudD0iYXV0byIKICAgICAgIGlua3NjYXBlOnN0b2NraWQ9IkFycm93MU1lbmQiPgogICAgICA8cGF0aAogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgtMC40LDAsMCwtMC40LC00LDApIgogICAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjAwMDAwMDAzcHQ7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgICAgZD0iTSAwLDAgNSwtNSAtMTIuNSwwIDUsNSBaIgogICAgICAgICBpZD0icGF0aDE2MzMiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L21hcmtlcj4KICAgIDxtYXJrZXIKICAgICAgIGlua3NjYXBlOnN0b2NraWQ9IkFycm93MU1lbmQiCiAgICAgICBvcmllbnQ9ImF1dG8iCiAgICAgICByZWZZPSIwIgogICAgICAgcmVmWD0iMCIKICAgICAgIGlkPSJBcnJvdzFNZW5kIgogICAgICAgc3R5bGU9Im92ZXJmbG93OnZpc2libGUiCiAgICAgICBpbmtzY2FwZTppc3N0b2NrPSJ0cnVlIgogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIj4KICAgICAgPHBhdGgKICAgICAgICAgaWQ9InBhdGgxMjk0IgogICAgICAgICBkPSJNIDAsMCA1LC01IC0xMi41LDAgNSw1IFoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuMDAwMDAwMDNwdDtzdHJva2Utb3BhY2l0eToxIgogICAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgtMC40LDAsMCwtMC40LC00LDApIgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPC9tYXJrZXI+CiAgICA8bWFya2VyCiAgICAgICBpbmtzY2FwZTppc3N0b2NrPSJ0cnVlIgogICAgICAgc3R5bGU9Im92ZXJmbG93OnZpc2libGUiCiAgICAgICBpZD0ibWFya2VyMTU2OSIKICAgICAgIHJlZlg9IjAiCiAgICAgICByZWZZPSIwIgogICAgICAgb3JpZW50PSJhdXRvIgogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iQXJyb3cxTXN0YXJ0Ij4KICAgICAgPHBhdGgKICAgICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC40LDAsMCwwLjQsNCwwKSIKICAgICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS4wMDAwMDAwM3B0O3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICAgIGQ9Ik0gMCwwIDUsLTUgLTEyLjUsMCA1LDUgWiIKICAgICAgICAgaWQ9InBhdGgxNTY3IgogICAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPC9tYXJrZXI+CiAgICA8bWFya2VyCiAgICAgICBpbmtzY2FwZTpzdG9ja2lkPSJBcnJvdzFNc3RhcnQiCiAgICAgICBvcmllbnQ9ImF1dG8iCiAgICAgICByZWZZPSIwIgogICAgICAgcmVmWD0iMCIKICAgICAgIGlkPSJBcnJvdzFNc3RhcnQiCiAgICAgICBzdHlsZT0ib3ZlcmZsb3c6dmlzaWJsZSIKICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiCiAgICAgICBpbmtzY2FwZTpjb2xsZWN0PSJhbHdheXMiPgogICAgICA8cGF0aAogICAgICAgICBpZD0icGF0aDEyOTEiCiAgICAgICAgIGQ9Ik0gMCwwIDUsLTUgLTEyLjUsMCA1LDUgWiIKICAgICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS4wMDAwMDAwM3B0O3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDAuNCwwLDAsMC40LDQsMCkiCiAgICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgPHNvZGlwb2RpOm5hbWVkdmlldwogICAgIGlkPSJiYXNlIgogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzY2NjY2NiIKICAgICBib3JkZXJvcGFjaXR5PSIxLjAiCiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAuMCIKICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOnpvb209IjQuODczNTA5NyIKICAgICBpbmtzY2FwZTpjeD0iODEuOTczNzg0IgogICAgIGlua3NjYXBlOmN5PSI4MS45NzM3NzgiCiAgICAgaW5rc2NhcGU6ZG9jdW1lbnQtdW5pdHM9Im1tIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9ImxheWVyMSIKICAgICBzaG93Z3JpZD0idHJ1ZSIKICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiCiAgICAgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTAxMSIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIj4KICAgIDxpbmtzY2FwZTpncmlkCiAgICAgICB0eXBlPSJ4eWdyaWQiCiAgICAgICBpZD0iZ3JpZDgxNSIKICAgICAgIG9yaWdpbng9Ii01MS4wNzE1MjEiCiAgICAgICBvcmlnaW55PSItMTIyLjUwOTAyIiAvPgogIDwvc29kaXBvZGk6bmFtZWR2aWV3PgogIDxtZXRhZGF0YQogICAgIGlkPSJtZXRhZGF0YTUiPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxnCiAgICAgaW5rc2NhcGU6bGFiZWw9IkxheWVyIDEiCiAgICAgaW5rc2NhcGU6Z3JvdXBtb2RlPSJsYXllciIKICAgICBpZD0ibGF5ZXIxIgogICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01MS4wNzE1MTksLTEzMS4xMTMxOSkiPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiM4MDgwODA7c3Ryb2tlLXdpZHRoOjAuMTI3O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTowLjI1NCwgMC4xMjc7c3Ryb2tlLWRhc2hvZmZzZXQ6MDtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTYsMTUwLjE1NjI1IGggLTUuMjkxNjY3IHYgMi42NDU4MyIKICAgICAgIGlkPSJwYXRoMTgwMSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiCiAgICAgICBzb2RpcG9kaTpub2RldHlwZXM9ImNjYyIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojODA4MDgwO3N0cm9rZS13aWR0aDowLjEyNztzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6MC4yNTQsIDAuMTI3O3N0cm9rZS1kYXNob2Zmc2V0OjA7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gNzIuNzYwNDE2LDEzNC4yODEyNSBoIDEzLjIyOTE2NiBsIDEwZS03LDE4LjUyMDgzIgogICAgICAgaWQ9InBhdGgxODAzIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDx0ZXh0CiAgICAgICB4bWw6c3BhY2U9InByZXNlcnZlIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjEuNDExMTExMTJweDtsaW5lLWhlaWdodDoxLjI1O2ZvbnQtZmFtaWx5OnNhbnMtc2VyaWY7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpzYW5zLXNlcmlmO3RleHQtYWxpZ246Y2VudGVyO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O3RleHQtYW5jaG9yOm1pZGRsZTtmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiCiAgICAgICB4PSI3NS40MDYyNSIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3IgogICAgICAgICB4PSI3NS40MDYyNSIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+MTwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA3NS40MDYyNDksMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDx0ZXh0CiAgICAgICB4bWw6c3BhY2U9InByZXNlcnZlIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjEuNDExMTExMTJweDtsaW5lLWhlaWdodDoxLjI1O2ZvbnQtZmFtaWx5OnNhbnMtc2VyaWY7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpzYW5zLXNlcmlmO3RleHQtYWxpZ246Y2VudGVyO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O3RleHQtYW5jaG9yOm1pZGRsZTtmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiCiAgICAgICB4PSI3OC4wNTIwODYiCiAgICAgICB5PSIxNTYuMDYyMTMiCiAgICAgICBpZD0idGV4dDgxOS02Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTciCiAgICAgICAgIHg9Ijc4LjA1MjA4NiIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+MjwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA3OC4wNTIwODMsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTMiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHRleHQKICAgICAgIHhtbDpzcGFjZT0icHJlc2VydmUiCiAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6MS40MTExMTExMnB4O2xpbmUtaGVpZ2h0OjEuMjU7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1hbGlnbjpjZW50ZXI7bGV0dGVyLXNwYWNpbmc6MHB4O3dvcmQtc3BhY2luZzowcHg7dGV4dC1hbmNob3I6bWlkZGxlO2ZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiIKICAgICAgIHg9IjgwLjY5NzkxNCIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5LTY1Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTYiCiAgICAgICAgIHg9IjgwLjY5NzkxNCIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+MzwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA4MC42OTc5MTcsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTM5IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDx0ZXh0CiAgICAgICB4bWw6c3BhY2U9InByZXNlcnZlIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjEuNDExMTExMTJweDtsaW5lLWhlaWdodDoxLjI1O2ZvbnQtZmFtaWx5OnNhbnMtc2VyaWY7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpzYW5zLXNlcmlmO3RleHQtYWxpZ246Y2VudGVyO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O3RleHQtYW5jaG9yOm1pZGRsZTtmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiCiAgICAgICB4PSI4My4zNDM3NSIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5LTIiPjx0c3BhbgogICAgICAgICBzb2RpcG9kaTpyb2xlPSJsaW5lIgogICAgICAgICBpZD0idHNwYW44MTctOSIKICAgICAgICAgeD0iODMuMzQzNzUiCiAgICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgICAgc3R5bGU9ImZvbnQtc2l6ZToxLjQxMTExMTEycHg7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiPjQ8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gODMuMzQzNzUsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTM5MCIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iODUuOTg5NTg2IgogICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgaWQ9InRleHQ4MTktOCI+PHRzcGFuCiAgICAgICAgIHNvZGlwb2RpOnJvbGU9ImxpbmUiCiAgICAgICAgIGlkPSJ0c3BhbjgxNy04IgogICAgICAgICB4PSI4NS45ODk1ODYiCiAgICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgICAgc3R5bGU9ImZvbnQtc2l6ZToxLjQxMTExMTEycHg7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiPjU8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gODUuOTg5NTgzLDE1Mi44MDIwOCBWIDE1NC4xMjUiCiAgICAgICBpZD0icGF0aDgyMS01IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDx0ZXh0CiAgICAgICB4bWw6c3BhY2U9InByZXNlcnZlIgogICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1zaXplOjEuNDExMTExMTJweDtsaW5lLWhlaWdodDoxLjI1O2ZvbnQtZmFtaWx5OnNhbnMtc2VyaWY7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpzYW5zLXNlcmlmO3RleHQtYWxpZ246Y2VudGVyO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O3RleHQtYW5jaG9yOm1pZGRsZTtmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiCiAgICAgICB4PSI4OC42MzU0MTQiCiAgICAgICB5PSIxNTYuMDYyMTMiCiAgICAgICBpZD0idGV4dDgxOS0wIj48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTk2IgogICAgICAgICB4PSI4OC42MzU0MTQiCiAgICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgICAgc3R5bGU9ImZvbnQtc2l6ZToxLjQxMTExMTEycHg7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiPjY8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gODguNjM1NDE3LDE1Mi44MDIwOCBWIDE1NC4xMjUiCiAgICAgICBpZD0icGF0aDgyMS0zOCIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iOTEuMjgxMjUiCiAgICAgICB5PSIxNTYuMDYyMTMiCiAgICAgICBpZD0idGV4dDgxOS01Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTk4IgogICAgICAgICB4PSI5MS4yODEyNSIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+NzwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA5MS4yODEyNSwxNTIuODAyMDggViAxNTQuMTI1IgogICAgICAgaWQ9InBhdGg4MjEtNCIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ5OTk5OTtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO21hcmtlci1zdGFydDp1cmwoI21hcmtlcjE1NjkpO21hcmtlci1lbmQ6dXJsKCNtYXJrZXIxNjM1KSIKICAgICAgIGQ9Ik0gOTMuOTI3MDgzLDE1Mi44MDIwOCBIIDUxLjU5Mzc1IgogICAgICAgaWQ9InBhdGg5MjQiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0OTk5OTk7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MTttYXJrZXItc3RhcnQ6dXJsKCNBcnJvdzFNc3RhcnQpO21hcmtlci1lbmQ6dXJsKCNBcnJvdzFNZW5kKSIKICAgICAgIGQ9Ik0gNzIuNzYwNDE3LDE3My45Njg3NSBWIDEzMS42MzU0MiIKICAgICAgIGlkPSJwYXRoOTI0LTQiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHRleHQKICAgICAgIHhtbDpzcGFjZT0icHJlc2VydmUiCiAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6MS40MTExMTExMnB4O2xpbmUtaGVpZ2h0OjEuMjU7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1hbGlnbjpjZW50ZXI7bGV0dGVyLXNwYWNpbmc6MHB4O3dvcmQtc3BhY2luZzowcHg7dGV4dC1hbmNob3I6bWlkZGxlO2ZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiIKICAgICAgIHg9IjU0LjI4NjgzMSIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5LTQ3Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTYzIgogICAgICAgICB4PSI1NC4yODY4MzEiCiAgICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgICAgc3R5bGU9ImZvbnQtc2l6ZToxLjQxMTExMTEycHg7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiPi03PC90c3Bhbj48L3RleHQ+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJNIDU0LjIzOTU4MiwxNTIuODAyMDggViAxNTQuMTI1IgogICAgICAgaWQ9InBhdGg4MjEtMSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iNTYuOTMyNjY3IgogICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgaWQ9InRleHQ4MTktNi03Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTctNSIKICAgICAgICAgeD0iNTYuOTMyNjY3IgogICAgICAgICB5PSIxNTYuMDYyMTMiCiAgICAgICAgIHN0eWxlPSJmb250LXNpemU6MS40MTExMTExMnB4O3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIj4tNjwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA1Ni44ODU0MTUsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTMtOSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iNTkuNTc4NDk1IgogICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgaWQ9InRleHQ4MTktNjUtNiI+PHRzcGFuCiAgICAgICAgIHNvZGlwb2RpOnJvbGU9ImxpbmUiCiAgICAgICAgIGlkPSJ0c3BhbjgxNy02LTIiCiAgICAgICAgIHg9IjU5LjU3ODQ5NSIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+LTU8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gNTkuNTMxMjUsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTM5LTEiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHRleHQKICAgICAgIHhtbDpzcGFjZT0icHJlc2VydmUiCiAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6MS40MTExMTExMnB4O2xpbmUtaGVpZ2h0OjEuMjU7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1hbGlnbjpjZW50ZXI7bGV0dGVyLXNwYWNpbmc6MHB4O3dvcmQtc3BhY2luZzowcHg7dGV4dC1hbmNob3I6bWlkZGxlO2ZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiIKICAgICAgIHg9IjYyLjIyNDMzMSIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5LTItNyI+PHRzcGFuCiAgICAgICAgIHNvZGlwb2RpOnJvbGU9ImxpbmUiCiAgICAgICAgIGlkPSJ0c3BhbjgxNy05LTgiCiAgICAgICAgIHg9IjYyLjIyNDMzMSIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+LTQ8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gNjIuMTc3MDgzLDE1Mi44MDIwOCBWIDE1NC4xMjUiCiAgICAgICBpZD0icGF0aDgyMS0zOTAtNSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iNjQuODcwMTcxIgogICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgaWQ9InRleHQ4MTktOC03Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTgtNCIKICAgICAgICAgeD0iNjQuODcwMTcxIgogICAgICAgICB5PSIxNTYuMDYyMTMiCiAgICAgICAgIHN0eWxlPSJmb250LXNpemU6MS40MTExMTExMnB4O3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIj4tMzwvdHNwYW4+PC90ZXh0PgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0iTSA2NC44MjI5MTYsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTUtMSIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8dGV4dAogICAgICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtc2l6ZToxLjQxMTExMTEycHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246c2Fucy1zZXJpZjt0ZXh0LWFsaWduOmNlbnRlcjtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDt0ZXh0LWFuY2hvcjptaWRkbGU7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDowLjI2NDU4MzMyIgogICAgICAgeD0iNjcuNTE1OTkxIgogICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgaWQ9InRleHQ4MTktMC04Ij48dHNwYW4KICAgICAgICAgc29kaXBvZGk6cm9sZT0ibGluZSIKICAgICAgICAgaWQ9InRzcGFuODE3LTk2LTUiCiAgICAgICAgIHg9IjY3LjUxNTk5MSIKICAgICAgICAgeT0iMTU2LjA2MjEzIgogICAgICAgICBzdHlsZT0iZm9udC1zaXplOjEuNDExMTExMTJweDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiI+LTI8L3RzcGFuPjwvdGV4dD4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Ik0gNjcuNDY4NzUsMTUyLjgwMjA4IFYgMTU0LjEyNSIKICAgICAgIGlkPSJwYXRoODIxLTM4LTkiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHRleHQKICAgICAgIHhtbDpzcGFjZT0icHJlc2VydmUiCiAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LXNpemU6MS40MTExMTExMnB4O2xpbmUtaGVpZ2h0OjEuMjU7Zm9udC1mYW1pbHk6c2Fucy1zZXJpZjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOnNhbnMtc2VyaWY7dGV4dC1hbGlnbjpjZW50ZXI7bGV0dGVyLXNwYWNpbmc6MHB4O3dvcmQtc3BhY2luZzowcHg7dGV4dC1hbmNob3I6bWlkZGxlO2ZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMiIKICAgICAgIHg9IjcwLjE2MTgyNyIKICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgIGlkPSJ0ZXh0ODE5LTUtNyI+PHRzcGFuCiAgICAgICAgIHNvZGlwb2RpOnJvbGU9ImxpbmUiCiAgICAgICAgIGlkPSJ0c3BhbjgxNy05OC01IgogICAgICAgICB4PSI3MC4xNjE4MjciCiAgICAgICAgIHk9IjE1Ni4wNjIxMyIKICAgICAgICAgc3R5bGU9ImZvbnQtc2l6ZToxLjQxMTExMTEycHg7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzIiPi0xPC90c3Bhbj48L3RleHQ+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJNIDcwLjExNDU4MywxNTIuODAyMDggViAxNTQuMTI1IgogICAgICAgaWQ9InBhdGg4MjEtNC0zIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gNzIuNzYwNDEzLDE3MS4zMjI5MiBoIDEuMzIyOTIiCiAgICAgICBpZD0icGF0aDgyMS0xLTMiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTMsMTY4LjY3NzA4IGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTMtOS05IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gNzIuNzYwNDEzLDE2Ni4wMzEyNSBoIDEuMzIyOTIiCiAgICAgICBpZD0icGF0aDgyMS0zOS0xLTMiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTMsMTYzLjM4NTQyIGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTM5MC01LTgiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTMsMTYwLjczOTU4IGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTUtMS00IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gNzIuNzYwNDEzLDE1OC4wOTM3NSBoIDEuMzIyOTIiCiAgICAgICBpZD0icGF0aDgyMS0zOC05LTgiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTMsMTU1LjQ0NzkyIGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTQtMy03IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gNzIuNzYwNDE3LDE1MC4xNTYyNSBoIDEuMzIyOTIiCiAgICAgICBpZD0icGF0aDgyMS0xLTMtNiIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDcyLjc2MDQxNywxNDcuNTEwNDEgaCAxLjMyMjkyIgogICAgICAgaWQ9InBhdGg4MjEtMy05LTktNCIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDcyLjc2MDQxNywxNDQuODY0NTggaCAxLjMyMjkyIgogICAgICAgaWQ9InBhdGg4MjEtMzktMS0zLTMiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTcsMTQyLjIxODc1IGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTM5MC01LTgtMCIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDcyLjc2MDQxNywxMzkuNTcyOTEgaCAxLjMyMjkyIgogICAgICAgaWQ9InBhdGg4MjEtNS0xLTQtMyIKICAgICAgIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4yNjQ1ODMzMnB4O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDcyLjc2MDQxNywxMzYuOTI3MDggaCAxLjMyMjkyIgogICAgICAgaWQ9InBhdGg4MjEtMzgtOS04LTAiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSA3Mi43NjA0MTcsMTM0LjI4MTI1IGggMS4zMjI5MiIKICAgICAgIGlkPSJwYXRoODIxLTQtMy03LTkiCiAgICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiNiYTBjMmY7c3Ryb2tlOiNiYTBjMmY7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzJweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxO21hcmtlci1lbmQ6dXJsKCNtYXJrZXIxNzMxKSIKICAgICAgIGQ9Ik0gNzIuNzYwNDE2LDE1Mi44MDIwOCA4NS45ODk1ODIsMTM0LjI4MTI1IgogICAgICAgaWQ9InBhdGgxNjc5IgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojYmEwYzJmO3N0cm9rZTojYmEwYzJmO3N0cm9rZS13aWR0aDowLjI2NDU4MzMycHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MTttYXJrZXItZW5kOnVybCgjbWFya2VyMTY5MSkiCiAgICAgICBkPSJtIDcyLjc2MDQxNiwxNTIuODAyMDggLTUuMjkxNjY3LC0yLjY0NTgzIgogICAgICAgaWQ9InBhdGgxNjgxIgogICAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KICA8L2c+Cjwvc3ZnPgo=" alt="Vectors example" style="width:70.0%" /><figcaption>Vectors example</figcaption>
+</figure>
+</div>
+</div>
+<p>You should write a class for representing positional vector, so that each vector is an object of that class. For debugging purposes, you can overload the <code>&lt;&lt;</code> operator to print positional vectors in a pretty way.</p>
+<h3 id="magnitude-file"><span class="header-section-number">5.2.2</span> Magnitude file</h3>
+<p>The second file contains a list of magnitudes, one per line and expressed as an integer value.</p>
+<p>Example of magnitude file:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat magnitudes_1.dat
+<span class="go">1</span>
+<span class="go">5</span>
+<span class="go">17</span>
+<span class="go">...</span>
+</pre></div>
+
+<h2 id="phase-2-searching-strategies"><span class="header-section-number">5.3</span> Phase 2: searching strategies</h2>
+<p>In this phase, you will need to implement two search strategies in order to find the given magnitudes in the list of positional vectors: a linear search and a binary search.</p>
+<p>The user will choose between using one of these two strategies every time the program is run. If the user input is invalid, they should be asked again, as shown in the example below. The error message should be printed to <code>std::cerr</code>.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ./vector_search vectors_1.dat magnitudes_1.dat res_1.dat
+<span class="go">Choice of search method ([l]inear, [b]inary)?</span>
+<span class="go">J</span>
+<span class="go">Incorrect choice</span>
+<span class="go">2</span>
+<span class="go">Incorrect choice</span>
+<span class="go">l</span>
+<span class="go">CPU time: 10.777 microseconds</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>The general search algorithm is:</p>
+<div class="highlight"><pre><span></span>count = 0
+for (m in magnitudes)
+    if (search if m is in vectors)
+        count += 1
+</pre></div>
+
+<p>For the binary search, the list of positional vectors should be sorted by their magnitude beforehand. For the sorting, you should use <a href="https://en.cppreference.com/w/cpp/algorithm/sort"><code>std::sort</code></a>. If you overload the <code>&lt;</code> operator of your positional vector class, this function can easily be applied for sorting all of objects contained in a vector container:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">vect_list</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">vect_list</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+</pre></div>
+
+<p>If two positional vector’s magnitudes are equal, you can order them by their y values.</p>
+<p>Note that computing a positional vector’s magnitude will yield a floating-point value, while the magnitudes read for the magnitude file are expressed as integer values. When comparing these values, you can simply cast the floating-point values into simple integers.</p>
+<h2 id="phase-3-processing-time-measurements"><span class="header-section-number">5.4</span> Phase 3: processing time measurements</h2>
+<p>Create a class for counting the number of elapsed microseconds, which you will use to measure the performance of the search strategies. Your class should a high resolution clock, as defined by <code>std::chrono::high_resolution_clock</code>, and convert the time into microseconds for display.</p>
+<p>Because the linter provided by Google doesn’t like the use of <code>chrono</code>, we have to turn the linter down for the include line specifically as shown in the example.</p>
+<p>Here is an example of how to use the relevant functions defined in <code>std::chrono</code>:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;chrono&gt; // NOLINT (build/c++11)</span><span class="cp"></span>
+<span class="p">...</span>
+<span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">time_point</span> <span class="n">start</span><span class="p">;</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="p">...</span> <span class="cm">/* some computation happening */</span>
+<span class="k">auto</span> <span class="n">end</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="kt">double</span> <span class="n">elapsed_us</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">micro</span><span class="o">&gt;</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">).</span><span class="n">count</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;CPU time: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">elapsed_us</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; microseconds&quot;</span><span class="p">;</span>
+<span class="p">...</span>
+</pre></div>
+
+<p>If you declare <code>ct</code> as an object of such class, your program’s main fragment of code could look like:</p>
+<div class="highlight"><pre><span></span>print &quot;Choice of search method ([l]inear, [b]inary)?&quot;
+get choice from user
+ct.Reset()
+switch (choice)
+    case &#39;l&#39;:
+        run linear search
+        break;
+    case &#39;b&#39;:
+        sort list of vectors
+        run binary search
+        break;
+    default:
+        print &quot;Incorrect choice&quot;
+        go back to getting user choice
+print &quot;CPU time: &quot; &lt;&lt; ct.CurrentTime() &lt;&lt; &quot; ticks&quot;
+</pre></div>
+
+<p>Optionally, you can overload the class’ <code>&lt;&lt;</code> operator and simply display object <code>ct</code> directly (e.g.: <code>std::cout &lt;&lt; ct &lt;&lt; std::endl;</code>).</p>
+<h2 id="phase-4-writing-the-result"><span class="header-section-number">5.5</span> Phase 4: writing the result</h2>
+<p>Your program should now receive a third and last command line argument, specifying the name of the output file.</p>
+<p>The result of searching for all the magnitudes specified in the magnitude file should be the number of these magnitudes actually found in the list of positional vectors. This number should be written in the output file.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ./vector_search vectors_1.dat magnitudes_1.dat res_1.dat
+<span class="go">...</span>
+<span class="gp">$</span> cat res_1.dat         <span class="c1"># Result file</span>
+<span class="go">1</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h3 id="error-management"><span class="header-section-number">5.5.1</span> Error management</h3>
+<p>At this point, your program should handle errors properly.</p>
+<p>In case of any errors, i.e., if the wrong number of arguments is given or if a file cannot be opened, your program should print the relevant error message on <code>std::cerr</code> as shown in the example below.</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> ./vector_search
+<span class="go">Usage: ./vector_search &lt;vector_file.dat&gt; &lt;magnitude_file.dat&gt; &lt;result_file.dat&gt;</span>
+<span class="gp">$</span> ./vector_search toto
+<span class="go">Usage: ./vector_search &lt;vector_file.dat&gt; &lt;magnitude_file.dat&gt; &lt;result_file.dat&gt;</span>
+<span class="gp">$</span> ./vector_search toto titi tata
+<span class="go">Error: cannot open file toto</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h2 id="phase-5-measurement-analysis"><span class="header-section-number">5.6</span> Phase 5: measurement analysis</h2>
+<p>In this last phase, you need to generate various datasets of different sizes and run them with your program. It is advised to run each dataset at least three times and average the running time to make sure the measurements are steady.</p>
+<p>Find a collection of datasets that allows to make some analysis regarding the choice between the two searching strategies.</p>
+<p>Write everything in a PDF document name <code>report.pdf</code> that you will submit. Your report should be about two-page long, use Times New Roman 12-point font (or equivalent). You are encouraged to present tables and/or charts that show your findings and support your argumentation.</p>
+<p>Note that you don’t need to fully complete the program in order to work on this phase, as you have access to the dataset generator (<code>create_dataset</code>) and a working implementation of the program (<code>vector_search_reference</code>).</p>
+<h1 id="submission"><span class="header-section-number">6</span> Submission</h1>
+<p>Since we will use auto-grading scripts in order to test your program, it has to strictly follow the specified output format.</p>
+<h2 id="content"><span class="header-section-number">6.1</span> Content</h2>
+<p>You should submit the following files:</p>
+<ul>
+<li><p><code>AUTHORS</code>: your student ID, on one line. For example:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> cat AUTHORS
+<span class="go">00010001</span>
+<span class="gp">$</span>
+</pre></div>
+</li>
+<li><p><code>report.pdf</code>: the report file containing your analysis.</p></li>
+<li><p><code>Makefile</code>: a Makefile that compiles your source code without any errors or warnings (on CSIF computers), and builds an executable named <code>vector_search</code>.</p></li>
+<li><p><code>vector_search.cc</code> and any other source code files if applicable. For this project, a unique file should be enough though.</p></li>
+</ul>
+<p>Do not submit any other files.</p>
+<h2 id="handin"><span class="header-section-number">6.2</span> Handin</h2>
+<p>All of your files have to be submitted via <code>handin</code> from one of the CSIF computers:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> handin cs36c p1 &lt;files&gt;
+<span class="go">...</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>You can verify that the files have been properly submitted:</p>
+<div class="highlight"><pre><span></span><span class="gp">$</span> handin cs36c p1
+<span class="go">The following input files have been received:</span>
+<span class="go">...</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h1 id="academic-integrity"><span class="header-section-number">7</span> Academic integrity</h1>
+<p>You are expected to write this project <strong>from scratch</strong>, thus avoiding to use any existing source code available on the Internet, and <strong>alone</strong>. Asking someone else to write your code (e.g., on website such as Chegg.com) is not acceptable and will result in severe sanctions.</p>
+<p>You must specify in your report any sources that you have viewed to help you complete this assignment. All of the submissions will be compared with MOSS to determine if students have excessively collaborated, or have used the work of past students.</p>
+<p>Any failure to respect the class rules, as explained above or in the syllabus, or the <a href="http://sja.ucdavis.edu/cac.html">UC Davis Code of Conduct</a> will automatically result in the matter being transferred to Student Judicial Affairs.</p>
+</body>
+</html>
