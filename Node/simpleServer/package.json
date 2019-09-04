@@ -1,0 +1,14 @@
+{
+  "name": "simpleserver",
+  "version": "1.0.0",
+  "description": "very simple server",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "Brayden Stauffer",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
