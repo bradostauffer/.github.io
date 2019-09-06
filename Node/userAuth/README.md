@@ -1,0 +1,1 @@
+This project is a userauthentication program built with Express, and various modules installed with npm (see package.json for full list). It allows users to create an account, and log back into said account. User information is stored in a mongodb database; sensitive information such as passwords are encrypted using bcrypt. 

@@ -1,0 +1,1 @@
+This website is a simple blogging website created with express and various modules installed via npm (see package.json for full list). Functionality of website include: allowing users to create custom posts, allowing other users to comment on said posts, allowing users to browse posts based off of a certain category. 
