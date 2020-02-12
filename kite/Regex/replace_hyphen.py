@@ -1,6 +1,6 @@
 import re
 
-pattern = "([\d{3}])\-(\d{3})-([\d{4}])"
+pattern = "(\d{3})\-(\d{3})-(\d{4})"
 
 user_input = input()
 
