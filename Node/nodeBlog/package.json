@@ -16,7 +16,7 @@
     "express-session": "*",
     "express-validator": "^5.3.1",
     "moment": "*",
-    "mongodb": "2.2.21",
+    "mongodb": "3.6.1",
     "monk": "https://github.com/vccabral/monk.git",
     "morgan": "^1.9.1",
     "multer": "~1.0.2",
